@@ -4,15 +4,13 @@ import {Request, Response} from "express";
 import {UsersService} from "../Users/UsersService.class";
 
 export class Auth {
-    constructor(protected usersService: UsersService){
-
-    }
-    async registerNewUser(req:Request, res: Response) {
+    constructor(protected usersService: UsersService){}
+    async registerNewUserHandler(req:Request, res: Response) {
         const inputData:TypeRegistrationInput = req.body; //пришли данные для создания юзера
         const result = await this.usersService.createUser(inputData); //создаем юзера
         //результат работы по созданию юзера (alreadyExist, extraError, etc)
         if(result.status !== httpStatus.NoContent){
-            res.status(result.status).send(result.data);
+            res.status(result.status).send(result.error);
         }
         res.sendStatus(httpStatus.NoContent)
     }
