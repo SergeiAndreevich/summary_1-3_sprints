@@ -14,9 +14,23 @@ export class UsersService {
         if(userByLoginOrEmail) {
             return {data: null, status: httpStatus.Forbidden, error: {field: 'input',message: 'This user already exists'}}
         }
-        const passwordHash = await bcryptHelper.generateHash(dto.password)
-        const userId = await this.usersRepo.createUser(dto.login, dto.email, passwordHash);
+        const passwordHash = await bcryptHelper.generateHash(dto.password);
+        await this.usersRepo.createUser(dto.login, dto.email, passwordHash);
 
         return {data: null, status: httpStatus.NoContent}
+    }
+    async confirmEmailByCode(confirmationCode: string){
+        const user = await this.queryRepo.findUserByConfirmationCode(confirmationCode);
+        if(!user){
+            return {data: null, status: httpStatus.NotFound, error: {field: 'code',message: 'This user does not exist'}}
+        }
+        if(user &&
+            user.emailConfirmation.isConfirmed === false &&
+            user.emailConfirmation.expirationDate > new Date()) {
+            await this.usersRepo.confirmEmail(user.id);
+            return {data: null, status: httpStatus.NoContent}
+        }
+        return {data: null, status: httpStatus.BadRequest, error: {field: 'code',message: 'Code is already confirmed or expired'}}
+
     }
 }

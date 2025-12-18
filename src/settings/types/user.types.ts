@@ -7,12 +7,41 @@ export type TypeUserInput = {
 }
 
 export type TypeDBUser = {
+    accountData: {
+        login: string
+        email: string
+        password: string
+    }
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
+    }
+    passwordRecovery: {
+        confirmationCode: string | null
+        expirationDate: Date
+        isConfirmed: boolean
+    }
+}
+export type TypeDBUserWithMeta = {
     _id: ObjectId,
-    login: string,
-    email: string,
-    passwordHash: string,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    accountData: {
+        login: string
+        email: string
+        password: string
+    }
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
+    }
+    passwordRecovery: {
+        confirmationCode: string | null
+        expirationDate: Date
+        isConfirmed: boolean
+    }
 }
 
 export type TypeUserView = {

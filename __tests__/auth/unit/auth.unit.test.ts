@@ -28,4 +28,12 @@ describe('UsersService.createUser', () => {
         expect(result.status).toBe(httpStatus.Forbidden);
         expect(usersRepo.createUser).not.toHaveBeenCalled();
     })
+    it('should return 400 if ConfirmationCode already confirmed', async ()=>{
+        queryRepo.findUserByEmailConfirmationCode.mockResolvedValue({
+
+        })
+        const result = await usersService.confirmEmailByCode()
+        expect(result.status).toBe(httpStatus.BadRequest)
+        expect(result.error)
+    })
 });

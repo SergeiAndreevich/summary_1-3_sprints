@@ -10,8 +10,8 @@ const usersRepo = new UsersRepo();
 const usersService = new UsersService(queryRepo, usersRepo);
 const auth =  new Auth(usersService);
 authRouter
-    .post('/registration', auth.registerNewUserHandler)
-    .post('/registration-confirmation',)
+    .post('/registration', auth.registerNewUser)
+    .post('/registration-confirmation',auth.registrationConfirmation)
     .post('/registration-email-resending',)
     .post('/login', )
     .post('/password-recovery',)
