@@ -9,5 +9,8 @@ export const bcryptHelper = {
     },
     async generateHash(password:string) {
         return await bcrypt.hash(password, 10);
+    },
+    async comparePassword(inputPassword:string, passwordFromDB: string) {
+        return await bcrypt.compare(inputPassword, passwordFromDB);
     }
 }

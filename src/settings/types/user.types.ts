@@ -44,9 +44,29 @@ export type TypeDBUserWithMeta = {
     }
 }
 
-export type TypeUserView = {
+export type TypeUserFrontView = {
     id: string,
     login: string,
     email: string,
     createdAt: string
+}
+export type TypeUserBackView = {
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    accountData: {
+        login: string,
+        email: string,
+        password: string
+    },
+    emailConfirmation: {
+        confirmationCode: string | null,
+        isConfirmed: boolean,
+        expirationDate: Date
+    },
+    passwordRecovery:{
+        confirmationCode: string | null,
+        isConfirmed: boolean,
+        expirationDate: Date
+    }
 }

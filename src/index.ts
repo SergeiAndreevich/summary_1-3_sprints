@@ -5,6 +5,7 @@ import {dbSettings, runMongoose} from "./settings/database/db_settings";
 
 async function main() {
     const app = express(); //создали экземпляр приложения
+    app.set('trust proxy', true);
     setupApp(app); //в отдельной функции подключили middleware и роуты
     const PORT = process.env.PORT || 8080; //выделили порт для приложения
 

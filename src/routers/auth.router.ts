@@ -12,8 +12,8 @@ const auth =  new Auth(usersService);
 authRouter
     .post('/registration', auth.registerNewUser)
     .post('/registration-confirmation',auth.registrationConfirmation)
-    .post('/registration-email-resending',)
-    .post('/login', )
+    .post('/registration-email-resending',auth.resendEmailConfirmationCode)
+    .post('/login', auth.loginUser)
     .post('/password-recovery',)
     .post('/new-password',)
     .post('/refresh-token',)

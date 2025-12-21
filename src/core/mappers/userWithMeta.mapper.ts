@@ -7,7 +7,8 @@ export  function mapUserWithMeta(user: TypeDBUserWithMeta) {
         updatedAt: user.updatedAt.toISOString(),
         accountData: {
             login: user.accountData.login,
-            email: user.accountData.email
+            email: user.accountData.email,
+            password: user.accountData.password
         },
         emailConfirmation: {
             confirmationCode: user.emailConfirmation.confirmationCode,

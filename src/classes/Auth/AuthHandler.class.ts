@@ -24,11 +24,27 @@ export class Auth {
         res.sendStatus(httpStatus.NoContent)
 
     }
-    async registrationResending(req:Request, res: Response) {
-
+    async resendEmailConfirmationCode(req:Request, res: Response) {
+        const email = req.body;
+        const result: IResult = await this.usersService.resendEmailConfirmationCode(email);
+        if(result.status !== httpStatus.NoContent){
+            res.status(result.status).send(result.error);
+        }
+        res.sendStatus(httpStatus.NoContent)
     }
     async loginUser(req:Request, res: Response) {
-
+        const {loginOrEmail, password} = req.body;
+        const ip = req.ip;
+        if(!ip){
+            res.sendStatus(httpStatus.Forbidden);
+            return
+        }
+        const deviceName = req.headers['user-agent']  || 'Unknown device';
+        const result = await this.usersService.loginUser(loginOrEmail, password, ip, deviceName);
+        if(result.status !== httpStatus.Ok){
+            res.status(httpStatus.Unauthorized).send(result.error);
+        }
+        res.status(httpStatus.Ok).send()
     }
     async recoveryPassword(req:Request, res: Response) {
 
