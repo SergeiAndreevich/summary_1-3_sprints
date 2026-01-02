@@ -1,4 +1,4 @@
-import {ObjectId} from "mongodb";
+import {Types} from "mongoose";
 
 export type TypeUserInput = {
     login: string,
@@ -7,6 +7,8 @@ export type TypeUserInput = {
 }
 
 export type TypeDBUser = {
+    createdAt: Date
+    updatedAt: Date,
     accountData: {
         login: string
         email: string
@@ -24,7 +26,6 @@ export type TypeDBUser = {
     }
 }
 export type TypeDBUserWithMeta = {
-    _id: ObjectId,
     createdAt: Date,
     updatedAt: Date,
     accountData: {

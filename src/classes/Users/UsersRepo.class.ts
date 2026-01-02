@@ -1,35 +1,44 @@
 import {UserModel} from "../../settings/database/UserModel.mongoose";
 import {User} from "../../core/fabric/User.class";
-import {TypeDBUserWithMeta, TypeUserBackView, TypeUserFrontView} from "../../settings/types/user.types";
+import {TypeDBUser, TypeDBUserWithMeta, TypeUserBackView, TypeUserFrontView} from "../../settings/types/user.types";
 import {mapUserWithMeta} from "../../core/mappers/userWithMeta.mapper";
+import {mapUserToView} from "../../core/mappers/userViewModel.mapper";
+import {ObjectId} from "mongodb";
+import {WithMongoId} from "../../settings/database/db_settings";
 
 export class UsersRepo {
-    async createUser(login: string, email: string, passwordHash: string):Promise<void>{
+    async createUser(login: string, email: string, passwordHash: string):Promise<TypeUserFrontView | null>{
         const user = User.create(login, email,passwordHash);
-        await UserModel.create(user.toDB());
-        return
+        const createdUser = await UserModel.create(user.toDB());
+        return mapUserToView(createdUser.toObject());
     }
+    async deleteSpecificUser(userId:string){
+        const user = await UserModel.findByIdAndDelete({userId});
+        if (!user) {
+            return null
+        }
+        return user
+    }
+
     async findUserByConfirmationCode(confirmationCode:string):Promise<TypeUserBackView | null>{
         const user = await UserModel.findOne(
             {'emailConfirmation.confirmationCode': confirmationCode }
-        ).lean<TypeDBUserWithMeta>();
+        ).lean<WithMongoId<TypeDBUser>>();
         if(!user){
             return null
         }
         return mapUserWithMeta(user)
     }
     async confirmEmail(userId: string){
-        const result = await UserModel.updateOne({_id: userId},
+        const result = await UserModel.updateOne({_id: userId,"emailConfirmation.isConfirmed": false},
             {$set: {"emailConfirmation.isConfirmed": true}});
-        if(result.acknowledged && result.modifiedCount === 1){
-            return
-        }
-        throw new Error('Update is not successful');
+        return result.matchedCount === 1
     }
+
     async findUserByEmail(email:string):Promise<TypeUserBackView | null>{
         const user = await UserModel.findOne(
             {'accountData.email': email}
-        ).lean<TypeDBUserWithMeta>();
+        ).lean<WithMongoId<TypeDBUser>>();
         if(!user){
             return null
         }
@@ -40,8 +49,15 @@ export class UsersRepo {
             {$or: [
                     { 'accountData.login': login },
                     { 'accountData.email': email }
-                ]}).lean<TypeDBUserWithMeta>();
+                ]}).lean<WithMongoId<TypeDBUser>>();
         if (!user) {
+            return null
+        }
+        return mapUserWithMeta(user)
+    }
+    async findUserById(userId:string):Promise<TypeUserBackView | null> {
+        const user = await UserModel.findById(userId).lean<WithMongoId<TypeDBUser>>();
+        if(!user){
             return null
         }
         return mapUserWithMeta(user)

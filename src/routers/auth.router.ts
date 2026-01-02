@@ -3,11 +3,13 @@ import {Auth} from "../classes/Auth/AuthHandler.class";
 import {UsersService} from "../classes/Users/UsersService.class";
 import {QueryRepo} from "../classes/QueryRepo.class";
 import {UsersRepo} from "../classes/Users/UsersRepo.class";
+import {SessionsRepo} from "../classes/Session/SessionsRepo.class";
 
 export const authRouter = Router({});
 const queryRepo = new QueryRepo();
 const usersRepo = new UsersRepo();
-const usersService = new UsersService(queryRepo, usersRepo);
+const sessionsRepo = new SessionsRepo();
+const usersService = new UsersService(queryRepo, usersRepo, sessionsRepo);
 const auth =  new Auth(usersService);
 authRouter
     .post('/registration', auth.registerNewUser)

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {TypeDBUser, TypeUserInput} from "../types/user.types";
 import {TypeSession} from "../types/session.types";
 
 const sessionSchema = new mongoose.Schema<TypeSession>({

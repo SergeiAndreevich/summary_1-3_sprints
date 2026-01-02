@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {ObjectId} from "mongodb";
 
 export const dbSettings = {
     PORT: process.env.PORT || 5005,
@@ -25,3 +26,4 @@ export async function stopMongoose(){
         throw new Error(`Could not connect to the database ${err}`)
     }
 }
+export type WithMongoId<T> = T & { _id: ObjectId };

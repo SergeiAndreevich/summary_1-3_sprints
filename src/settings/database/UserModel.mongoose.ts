@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema<TypeDBUser>(
     },
     {
         timestamps: true,
-        versionKey: false,
+        versionKey: false
     }
 )
 

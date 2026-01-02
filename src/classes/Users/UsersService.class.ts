@@ -7,19 +7,31 @@ import {UsersRepo} from "./UsersRepo.class";
 import {jwtHelper} from "../../core/helpers/jwt.helper";
 import {Session} from "../../core/fabric/Session.class";
 import {SessionsRepo} from "../Session/SessionsRepo.class";
+import {TypeUserFrontView} from "../../settings/types/user.types";
 
 export class UsersService {
     constructor(private queryRepo: QueryRepo,
                 private usersRepo: UsersRepo,
                 private sessionsRepo: SessionsRepo){}
-    async createUser(dto:TypeRegistrationInput):Promise<IResult<null>>{
+    async createUser(dto:TypeRegistrationInput):Promise<IResult<TypeUserFrontView | null>>{
         const userByLoginOrEmail = await this.queryRepo.findUserByLoginOrEmail(dto.login, dto.email);
         if(userByLoginOrEmail) {
             return {data: null, status: httpStatus.Forbidden, error: {field: 'input',message: 'This user already exists'}}
         }
         const passwordHash = await bcryptHelper.generateHash(dto.password);
-        await this.usersRepo.createUser(dto.login, dto.email, passwordHash);
-        return {data: null, status: httpStatus.NoContent}
+        const userForView = await this.usersRepo.createUser(dto.login, dto.email, passwordHash);
+        if(!userForView){
+            return {data: null, status: httpStatus.ExtraError,error: {field: 'database',message: 'User not created'}}
+        }
+        //отправить сообщение с кодом подтверждения
+        return {data: userForView, status: httpStatus.NoContent}
+    }
+    async deleteSpecificUser(userId:string){
+        const user = await this.usersRepo.deleteSpecificUser(userId);
+        if(!user){
+            return {data: null, status: httpStatus.NotFound, error: {field: 'userId',message: 'User not found'}}
+        }
+        return {data: null,  status: httpStatus.NoContent}
     }
     async confirmEmailByCode(confirmationCode: string):Promise<IResult<null>>{
         const user = await this.usersRepo.findUserByConfirmationCode(confirmationCode);
@@ -29,7 +41,10 @@ export class UsersService {
         if(user &&
             user.emailConfirmation.isConfirmed === false &&
             user.emailConfirmation.expirationDate > new Date()) {
-            await this.usersRepo.confirmEmail(user.id);
+            const isConfirmed = await this.usersRepo.confirmEmail(user.id);
+            if(!isConfirmed){
+                return {data: null, status: httpStatus.ExtraError, error: {field: 'database',message: 'update problem'}}
+            }
             return {data: null, status: httpStatus.NoContent}
         }
         return {data: null, status: httpStatus.BadRequest, error: {field: 'code',message: 'Code is already confirmed or expired'}}

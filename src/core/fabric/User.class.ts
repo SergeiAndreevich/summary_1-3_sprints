@@ -1,5 +1,4 @@
 import {TypeDBUser} from "../../settings/types/user.types";
-import {ObjectId} from "mongodb";
 import { v4 as uuidv4 } from "uuid";
 import { add } from "date-fns";
 

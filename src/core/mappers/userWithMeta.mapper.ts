@@ -1,6 +1,7 @@
-import {TypeDBUserWithMeta} from "../../settings/types/user.types";
+import {TypeDBUser} from "../../settings/types/user.types";
+import {WithMongoId} from "../../settings/database/db_settings";
 
-export  function mapUserWithMeta(user: TypeDBUserWithMeta) {
+export  function mapUserWithMeta(user: WithMongoId<TypeDBUser>) {
     return {
         id: user._id.toString(),
         createdAt: user.createdAt.toISOString(),
