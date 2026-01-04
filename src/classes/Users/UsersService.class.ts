@@ -26,6 +26,7 @@ export class UsersService {
         //отправить сообщение с кодом подтверждения
         return {data: userForView, status: httpStatus.NoContent}
     }
+
     async deleteSpecificUser(userId:string){
         const user = await this.usersRepo.deleteSpecificUser(userId);
         if(!user){
@@ -33,6 +34,7 @@ export class UsersService {
         }
         return {data: null,  status: httpStatus.NoContent}
     }
+
     async confirmEmailByCode(confirmationCode: string):Promise<IResult<null>>{
         const user = await this.usersRepo.findUserByConfirmationCode(confirmationCode);
         if(!user){
@@ -57,6 +59,7 @@ export class UsersService {
         await this.usersRepo.confirmEmail(user.id);
         return {data: null, status: httpStatus.NoContent}
     }
+
     async loginUser(loginOrEmail: string, password: string, ip:string, deviceName:string): Promise<IResult<{accessToken:string,refreshToken:string } | null>> {
         //ищем юзера
         const user = await this.usersRepo.findUserByLoginOrEmail(loginOrEmail, loginOrEmail);

@@ -183,11 +183,5 @@ export class QueryRepo {
         return blogsToView
     }
 
-    async findPostById(postId: string){
-        const post = await PostModel.findById(postId).lean<WithMongoId<TypePostDB>>();
-        if(!post){
-            return null;
-        }
-        return
-    }
+
 }

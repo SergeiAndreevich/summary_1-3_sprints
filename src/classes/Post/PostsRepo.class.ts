@@ -8,6 +8,7 @@ import {PostModel} from "../../settings/database/PostModel.mongoose";
 import {mapNewPostForView, mapPostForView} from "../../core/mappers/postFrontView.mapper";
 import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settings/types/reaction.types";
 import {ReactionModel} from "../../settings/database/ReactionModel.mongoose";
+import {IPAginationAndSorting} from "../../settings/types/pagination.types";
 
 export class PostsRepo {
     async createPost(dto: TypePostInput){
@@ -39,5 +40,51 @@ export class PostsRepo {
             return null;
         }
         return mapPostForView(post)
+    }
+    async findPostsByFilter(dto:IPAginationAndSorting){
+        const {
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortDirection,
+            searchNameTerm,
+            searchLoginTerm,
+            searchEmailTerm
+        } = dto;
+        const skip = (pageNumber - 1) * pageSize;
+        const andFilters = [];
+
+        if (searchNameTerm) {
+            andFilters.push({ name: { $regex: searchNameTerm, $options: 'i' } });
+        }
+        if (searchLoginTerm) {
+            andFilters.push({ login: { $regex: searchLoginTerm, $options: 'i' } });
+        }
+
+        if (searchEmailTerm) {
+            andFilters.push({ email: { $regex: searchEmailTerm, $options: 'i' } });
+        }
+
+        const filter = andFilters.length > 0 ? { $or: andFilters } : {};
+        const items = await PostModel
+            .find(filter)
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(pageSize)
+            .lean< WithMongoId<TypePostDB>[]>();
+        const totalCount = await PostModel.countDocuments(filter);
+        const postsToView = {
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: items.map((item) => mapPostForView(item))
+        }
+        return postsToView
+    }
+
+    async removePostById(postId: string){
+        const post = await PostModel.findByIdAndDelete(postId).lean<WithMongoId<TypePostDB>>();
+        return post
     }
 }

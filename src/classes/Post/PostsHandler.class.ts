@@ -5,6 +5,8 @@ import {PostsService} from "./PostsService.class";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {TypeCommentInput} from "../../settings/types/comment.types";
 import {TypeReactionInput} from "../../settings/types/reaction.types";
+import {paginationHelper} from "../../core/helpers/pagination.helper";
+import {IPAginationAndSorting} from "../../settings/types/pagination.types";
 
 export class PostHandler{
     constructor(private queryRepo: QueryRepo,
@@ -54,6 +56,40 @@ export class PostHandler{
 
     async findPostById(req:Request, res: Response){
         const postId = req.params.id;
-        const post = await this.queryRepo.findPostById(postId);
+        const userId = req.userId;
+        const result = await this.postsService.findPostById(postId, userId);
+        if(result.status !== httpStatus.Ok){
+            res.sendStatus(result.status);
+            return
+        }
+        res.status(httpStatus.Ok).send(result.data);
+    }
+    async findCommentsByPostId(req:Request, res: Response){
+        const postId = req.params.postId;
+        const userId = req.userId;
+        const query: Partial<IPAginationAndSorting> = req.query;
+        const filter = paginationHelper(query);
+        const result = await this.postsService.findCommentsByPostId(postId, filter, userId);
+        if(result.status !== httpStatus.Ok){
+            res.sendStatus(result.status);
+            return
+        }
+        res.status(httpStatus.Ok).send(result.data)
+    }
+    async findPostsByFilter(req:Request, res: Response){
+        const query: Partial<IPAginationAndSorting> = req.query;
+        const filter =  paginationHelper(query);
+        const userId = req.userId;
+        const result = await this.postsService.findPostsByFilter(filter, userId);
+        res.status(httpStatus.Ok).send(result.data);
+    }
+
+    async removePostById(req:Request, res: Response){
+        const postId = req.params.id;
+        const result = await this.postsService.removePostById(postId);
+        if(result.status !== httpStatus.NoContent){
+            res.sendStatus(result.status);
+        }
+        res.sendStatus(httpStatus.NoContent)
     }
 }

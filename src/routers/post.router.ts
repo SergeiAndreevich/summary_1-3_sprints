@@ -4,7 +4,7 @@ import {QueryRepo} from "../classes/QueryRepo.class";
 import {PostHandler} from "../classes/Post/PostsHandler.class";
 import {PostsRepo} from "../classes/Post/PostsRepo.class";
 import {PostsService} from "../classes/Post/PostsService.class";
-import {bearerGuard} from "../core/middlewares/guard/bearerAuthorization";
+import {bearerGuard, optionalBearerGuard} from "../core/middlewares/guard/bearerAuthorization";
 import {postIdValidation} from "../core/middlewares/postRouterValidators/postId.validation";
 import {CommentService} from "../classes/Comment/CommentService.class";
 import {CommentRepo} from "../classes/Comment/CommentRepo.class";
@@ -25,4 +25,7 @@ postRouter
     .post('/:postId/comments', bearerGuard, postIdValidation, postHandler.createCommentForSpecificPostId)
     .put('/:id', basicGuard, idValidation, postHandler.updatePostById)
     .put('/:postId/like-status', bearerGuard, postIdValidation, postHandler.changeReactionByPostId)
-    .get('/:id', idValidation, postHandler.findPostById)
+    .get('/:id', optionalBearerGuard, idValidation, postHandler.findPostById)
+    .get('/:postId/comments', optionalBearerGuard, postIdValidation, postHandler.findCommentsByPostId)
+    .get('/', optionalBearerGuard, postHandler.findPostsByFilter)
+    .delete('/:id', idValidation,postHandler.removePostById)
