@@ -15,7 +15,7 @@ const RateLimitSchema = new mongoose.Schema({
 
 RateLimitSchema.index(
     {createdAt: 1},
-    {expireAfterSeconds: 10}
+    {expireAfterSeconds: WINDOW_SECONDS}
 )
 export const RateLimitModel = mongoose.model('RateLimit', RateLimitSchema);
 

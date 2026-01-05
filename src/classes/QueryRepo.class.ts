@@ -11,7 +11,6 @@ import {PostModel} from "../settings/database/PostModel.mongoose";
 import {TypePostDB, TypePostView} from "../settings/types/post.types";
 import {likesCounterHelper} from "../core/helpers/likeCounter.helper";
 import {EntitiesForReaction, ReactionType} from "../settings/types/reaction.types";
-import {mapPostForView} from "../core/mappers/postFrontView.mapper";
 
 export class QueryRepo {
     async findUserByLoginOrEmail(login:string, email: string): Promise<TypeUserFrontView | null> {
@@ -65,6 +64,13 @@ export class QueryRepo {
             items: items.map((item) => mapUserToView(item))
         }
         return usersToView
+    }
+    async findUserById(userId:string){
+        const user = await UserModel.findById(userId).lean<WithMongoId<TypeDBUser>>()
+        if(!user){
+            return null
+        }
+        return mapUserToView(user)
     }
 
     async findSpecificBlog(blogId: string){
@@ -182,6 +188,5 @@ export class QueryRepo {
         }
         return blogsToView
     }
-
 
 }

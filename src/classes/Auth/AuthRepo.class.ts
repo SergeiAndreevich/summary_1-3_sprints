@@ -1,5 +1,11 @@
 import {UserModel} from "../../settings/database/UserModel.mongoose";
 import {add} from "date-fns";
+import {WithMongoId} from "../../settings/database/db_settings";
+import {TypeDBUser} from "../../settings/types/user.types";
+import {JwtPayload} from "jsonwebtoken";
+import {SessionModel} from "../../settings/database/SessionModel.mongoose";
+import {TypeSession} from "../../settings/types/session.types";
+import {ObjectId} from "mongodb";
 
 export class AuthRepo {
     async recoveryPassword(email:string, confirmationCode:string) {
@@ -28,29 +34,34 @@ export class AuthRepo {
         );
         return isUpdated.matchedCount === 1
     }
-    async setNewPassword() {
-        //отдаем код и пароль в репозиторий, если код ок, то обновляем запись о пароле
-        const newPasswordHash = await bcryptHelper.generateHash(newPassword, SALT_ROUNDS);
-        const result = await this.authRepo.setNewPassword(code, newPasswordHash);
-        return {data: result.data, status: result.status, errorMessage: result.errorMessage}
+    async setNewPassword(newPassword: string, recoveryCode:string) {
+        const user = await UserModel.findOne({"passwordRecovery.confirmationCode":recoveryCode}).lean<WithMongoId<TypeDBUser>>()
+        if(!user ||
+            user.passwordRecovery.isConfirmed === true ||
+            new Date()> user.passwordRecovery.expirationDate) {
+            return false
+        }
+        const isSet = await UserModel.updateOne({_id: user._id},
+            {$set: {"passwordRecovery.confirmationCode":recoveryCode, "passwordRecovery.isConfirmed":true}})
+        return isSet.matchedCount === 1
     }
 
-    async updateRefreshToken(refreshToken:string): Promise<IResult<null | {accessToken: string, refreshToken: string}>> {
-        //раскукоживаем рефреш-токен и получаем оттуда данные
-        const decodedRefresh = jwtHelper.verifyRefreshToken(refreshToken);
-        if (!decodedRefresh) {
-            return {data:null, status:ResultStatuses.unauthorized}
-        }
-        const result = await this.authRepo.updateTokens(decodedRefresh!);
-        return {data: result.data, status: result.status, errorMessage: result.errorMessage}
-    }
-    async removeRefreshToken(refreshToken:string): Promise<IResult<null>> {
-        const decodedRefresh = jwtHelper.verifyRefreshToken(refreshToken);
-        if(!decodedRefresh){
-            return {data: null, status: ResultStatuses.unauthorized, errorMessage: {field: 'refreshToken', message: 'Refresh token is empty'}};
-        }
-
-        const result = await this.authRepo.removeRefreshToken(decodedRefresh);
-        return {data: result.data, status: result.status}
-    }
+    // async updateRefreshToken(refreshToken:string): Promise<IResult<null | {accessToken: string, refreshToken: string}>> {
+    //     //раскукоживаем рефреш-токен и получаем оттуда данные
+    //     const decodedRefresh = jwtHelper.verifyRefreshToken(refreshToken);
+    //     if (!decodedRefresh) {
+    //         return {data:null, status:ResultStatuses.unauthorized}
+    //     }
+    //     const result = await this.authRepo.updateTokens(decodedRefresh!);
+    //     return {data: result.data, status: result.status, errorMessage: result.errorMessage}
+    // }
+    // async removeRefreshToken(refreshToken:string): Promise<IResult<null>> {
+    //     const decodedRefresh = jwtHelper.verifyRefreshToken(refreshToken);
+    //     if(!decodedRefresh){
+    //         return {data: null, status: ResultStatuses.unauthorized, errorMessage: {field: 'refreshToken', message: 'Refresh token is empty'}};
+    //     }
+    //
+    //     const result = await this.authRepo.removeRefreshToken(decodedRefresh);
+    //     return {data: result.data, status: result.status}
+    // }
 }

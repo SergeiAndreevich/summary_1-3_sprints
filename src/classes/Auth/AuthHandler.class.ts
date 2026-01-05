@@ -1,13 +1,15 @@
-import {TypeRegistrationInput} from "../../settings/types/auth.types";
+import {TypePasswordRecoveryInput, TypeRegistrationInput} from "../../settings/types/auth.types";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {Request, Response} from "express";
 import {UsersService} from "../Users/UsersService.class";
 import {IResult} from "../../settings/types/resultObject";
 import {AuthService} from "./AuthService.class";
+import {QueryRepo} from "../QueryRepo.class";
 
 export class Auth {
     constructor(protected usersService: UsersService,
-                protected authService: AuthService){}
+                protected authService: AuthService,
+                protected queryRepo: QueryRepo){}
     async registerNewUser(req:Request, res: Response) {
         const inputData:TypeRegistrationInput = req.body; //пришли данные для создания юзера
         const result = await this.usersService.createUser(inputData); //создаем юзера
@@ -34,6 +36,27 @@ export class Auth {
         const result: IResult = await this.usersService.resendEmailConfirmationCode(email);
         if(result.status !== httpStatus.NoContent){
             res.status(result.status).send(result.error);
+            return
+        }
+        res.sendStatus(httpStatus.NoContent)
+    }
+
+    async recoveryPassword(req:Request, res: Response) {
+        //получаем email
+        const email = req.body.email;
+        //отдаем его в сервис и говорим "отправь код восстановления пароля"
+        const result = await this.authService.recoveryPassword(email);
+        //в любом случае отправляем 204, чтоб не палить email
+        res.sendStatus(httpStatus.NoContent)
+    }
+    async setNewPassword(req:Request, res: Response) {
+        //забираем данные из боди
+        const input:TypePasswordRecoveryInput = req.body;
+        //отдаем в сервис и говорим "обнови"
+        const result = await this.authService.setNewPassword(input.newPassword,input.recoveryCode);
+        //получаем результат
+        if(result.status !== httpStatus.NoContent) {
+            res.status(httpStatus.BadRequest)
             return
         }
         res.sendStatus(httpStatus.NoContent)
@@ -69,32 +92,6 @@ export class Auth {
                 break
         }
     }
-
-    async recoveryPassword(req:Request, res: Response) {
-        //получаем email
-        const email = req.body.email;
-        //отдаем его в сервис и говорим "отправь код восстановления пароля"
-        const result = await this.authService.recoveryPassword(email);
-        if(result.status !== httpStatus.NoContent){
-            res.sendStatus(httpStatus.ExtraError);
-            return
-        }
-        //успешно? отправляем 204
-        res.sendStatus(httpStatus.NoContent)
-    }
-    async setNewPassword(req:Request, res: Response) {
-        //забираем данные из боди
-        const input = req.body;
-        //отдаем в сервис и говорим "обнови"
-        const result = await this.authService.setNewPassword(input.recoveryCode,input.newPassword);
-        //получаем результат
-        if(result.status !== ResultStatuses.success) {
-            res.status(httpStatus.BadRequest).send(createErrorsMessages(result.errorMessage!));
-            return
-        }
-        res.sendStatus(httpStatus.NoContent)
-    }
-
     async refreshAccess(req:Request, res: Response){
         //проверяем,пришел ли в куки рефреш-токен
         const refreshToken = req.cookies.refreshToken;
@@ -105,7 +102,7 @@ export class Auth {
         // ВАЖНО: Сначала проверяем валидность токена
         //ищем, обновляем пару
         const result = await this.authService.updateRefreshToken(refreshToken);
-        if(result.status !== ResultStatuses.success){
+        if(result.status !== httpStatus.Ok){
             res.sendStatus(httpStatus.Unauthorized);
             return
         }
@@ -113,13 +110,11 @@ export class Auth {
         res.cookie("refreshToken", result.data!.refreshToken, {
             httpOnly: true,
             secure: true,
-            //secure: process.env.NODE_ENV === 'production',
             sameSite: "lax",
             maxAge: 20 * 60 * 1000 // 20 минут в ms
         });
         res.status(httpStatus.Ok).send({accessToken: result.data!.accessToken})
     }
-
     async logoutUser(req:Request, res: Response){
         // check actual token
         const refreshToken = req.cookies.refreshToken;
@@ -128,9 +123,9 @@ export class Auth {
             return
         }
         // вносим изменения в БД, т.е. протухаем существующий токен
-        const result = await this.authService.removeRefreshToken(refreshToken);
+        const result = await this.authService.closeSession(refreshToken);
         //проверяем статус того че пришло из БД
-        if(result.status !== ResultStatuses.success){
+        if(result.status !== httpStatus.NoContent){
             res.sendStatus(httpStatus.Unauthorized);
             return
         }
@@ -145,11 +140,11 @@ export class Auth {
             res.sendStatus(httpStatus.Unauthorized)
             return
         }
-        const user = await this.queryRepo.findUserByIdOrFail(userId);
+        const user = await this.queryRepo.findUserById(userId);
         if(!user){
             res.sendStatus(httpStatus.ExtraError)
             return
         }
-        res.status(httpStatus.Ok).send({email:user?.email,login:user?.login,userId:user?.id})
+        res.status(httpStatus.Ok).send({email:user.email,login:user.login,userId:user.id})
     }
 }

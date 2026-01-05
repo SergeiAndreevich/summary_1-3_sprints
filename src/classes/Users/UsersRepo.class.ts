@@ -3,12 +3,10 @@ import {User} from "../../core/fabric/User.class";
 import {TypeDBUser, TypeDBUserWithMeta, TypeUserBackView, TypeUserFrontView} from "../../settings/types/user.types";
 import {mapUserWithMeta} from "../../core/mappers/userWithMeta.mapper";
 import {mapUserToView} from "../../core/mappers/userViewModel.mapper";
-import {ObjectId} from "mongodb";
 import {WithMongoId} from "../../settings/database/db_settings";
 
 export class UsersRepo {
-    async createUser(login: string, email: string, passwordHash: string):Promise<TypeUserFrontView | null>{
-        const user = User.create(login, email,passwordHash);
+    async createUser(user:User):Promise<TypeUserFrontView | null>{
         const createdUser = await UserModel.create(user.toDB());
         return mapUserToView(createdUser.toObject());
     }

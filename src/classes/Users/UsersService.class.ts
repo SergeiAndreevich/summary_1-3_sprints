@@ -8,6 +8,8 @@ import {jwtHelper} from "../../core/helpers/jwt.helper";
 import {Session} from "../../core/fabric/Session.class";
 import {SessionsRepo} from "../Session/SessionsRepo.class";
 import {TypeUserFrontView} from "../../settings/types/user.types";
+import {User} from "../../core/fabric/User.class";
+import {v4 as uuiv4} from "uuid";
 
 export class UsersService {
     constructor(private queryRepo: QueryRepo,
@@ -19,7 +21,8 @@ export class UsersService {
             return {data: null, status: httpStatus.Forbidden, error: {field: 'input',message: 'This user already exists'}}
         }
         const passwordHash = await bcryptHelper.generateHash(dto.password);
-        const userForView = await this.usersRepo.createUser(dto.login, dto.email, passwordHash);
+        const user = User.create(dto.login, dto.email, passwordHash);
+        const userForView = await this.usersRepo.createUser(user);
         if(!userForView){
             return {data: null, status: httpStatus.ExtraError,error: {field: 'database',message: 'User not created'}}
         }
@@ -56,7 +59,10 @@ export class UsersService {
         if(!user ||  user.emailConfirmation.isConfirmed) {
             return {data: null, status: httpStatus.BadRequest, error: {field: 'email',message: 'No user or email is already confirmed'}}
         }
-        await this.usersRepo.confirmEmail(user.id);
+        const isConfirmed = await this.usersRepo.confirmEmail(user.id);
+        if(!isConfirmed){
+            return {data: null, status: httpStatus.ExtraError, error: {field: 'database',message: 'update problem'}}
+        }
         return {data: null, status: httpStatus.NoContent}
     }
 
@@ -73,17 +79,13 @@ export class UsersService {
         }
         //создаем аксес рефреш токены, создаем сессию и возвращаем токен
         const accessToken = await jwtHelper.generateAccessToken(user.id);
-        const {refreshToken, deviceId} = await jwtHelper.generateRefreshToken(user.id);
+        const deviceId = uuiv4();
+        const refreshTokenWithMeta = await jwtHelper.generateRefreshToken(user.id, deviceId);
 
-        //раскукоживаем payload (в payload сидит userId, jti, iat, exp = iat + expiresIn)
-        const decodedRefresh = jwtHelper.verifyRefreshToken(refreshToken);
-        if(!decodedRefresh){
-            return {data:null, status: httpStatus.ExtraError}
-        }
         const session = Session.create(
-            user.id,deviceId,ip,deviceName, new Date(decodedRefresh.iat!*1000), new Date(decodedRefresh.exp!*1000)
+            user.id,deviceId,ip,deviceName, refreshTokenWithMeta.meta.createdAt, refreshTokenWithMeta.meta.expiresIn
         )
-        await this.sessionsRepo.createSession(session.toDb());
-        return  {data: {accessToken,refreshToken }, status: httpStatus.Ok}
+        await this.sessionsRepo.createSession(session);
+        return  {data: {accessToken, refreshToken: refreshTokenWithMeta.token}, status: httpStatus.Ok}
     }
 }
