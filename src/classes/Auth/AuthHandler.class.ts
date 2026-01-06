@@ -1,4 +1,8 @@
-import {TypePasswordRecoveryInput, TypeRegistrationInput} from "../../settings/types/auth.types";
+import {
+    TypeEmailConfirmationCode,
+    TypePasswordRecoveryInput,
+    TypeRegistrationInput
+} from "../../settings/types/auth.types";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {Request, Response} from "express";
 import {UsersService} from "../Users/UsersService.class";
@@ -22,7 +26,7 @@ export class Auth {
     }
 
     async registrationConfirmation(req:Request, res: Response) {
-        const code = req.body;
+        const code:string = req.body.code;
         const result:IResult<null> = await this.usersService.confirmEmailByCode(code);
         if(result.status !== httpStatus.NoContent){
             res.status(result.status).send(result.error);

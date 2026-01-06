@@ -6,6 +6,8 @@ import {BlogRepo} from "../classes/Blog/BlogRepo.class";
 import {basicGuard} from "../core/middlewares/guard/basicAuthorization";
 import {blogIdValidation} from "../core/middlewares/blogRouterValidators/blogId.validation";
 import {idValidation} from "../core/middlewares/blogRouterValidators/id.validation";
+import {blogInputValidation} from "../core/middlewares/blogRouterValidators/blogInput.validation";
+import {postToBlogInputValidation} from "../core/middlewares/blogRouterValidators/postToBlogInput.validation";
 
 
 const blogRouter = Router({});
@@ -14,9 +16,9 @@ const blogRepo = new BlogRepo();
 const blogService = new BlogService(blogRepo);
 const blogHandler = new BlogHandler(queryRepo, blogService);
 blogRouter
-    .post('/', basicGuard, blogHandler.createBlog)
-    .post('/:blogId/posts', basicGuard, blogIdValidation, blogHandler.createPostForSpecificBlog)
-    .put('/:id', basicGuard, idValidation, blogHandler.changeBlogById)
+    .post('/', basicGuard, blogInputValidation, blogHandler.createBlog)
+    .post('/:blogId/posts', basicGuard, blogIdValidation, postToBlogInputValidation, blogHandler.createPostForSpecificBlog)
+    .put('/:id', basicGuard, idValidation, blogInputValidation, blogHandler.changeBlogById)
     .get('/:id', idValidation, blogHandler.findSpecificBlogById)
     .get('/:blogId/posts', blogIdValidation, blogHandler.findPostsForSpecificBlogId)
     .get('/', blogHandler.findBlogsByFilter)

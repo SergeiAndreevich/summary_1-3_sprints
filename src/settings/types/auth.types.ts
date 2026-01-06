@@ -13,3 +13,6 @@ export type TypeTokens = {
     accessToken: string,
     refreshToken: string
 }
+export type TypeEmailConfirmationCode = {
+    code: string,
+}

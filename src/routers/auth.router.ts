@@ -8,8 +8,10 @@ import {AuthService} from "../classes/Auth/AuthService.class";
 import {AuthRepo} from "../classes/Auth/AuthRepo.class";
 import {antiClicker} from "../core/middlewares/anti-clicker-middleware";
 import {userInputValidation} from "../core/middlewares/userRouterValidators/userInput.validation";
-import {codeValidation} from "../core/middlewares/userRouterValidators/emailCode.validation";
+import {codeValidation, emailValidation} from "../core/middlewares/userRouterValidators/emailCode.validation";
 import {bearerGuard} from "../core/middlewares/guard/bearerAuthorization";
+import {inputAuthValidation} from "../core/middlewares/userRouterValidators/authInput.validation";
+import {passwordRecoveryValidation} from "../core/middlewares/userRouterValidators/passwordRecovery.validation";
 
 export const authRouter = Router({});
 const queryRepo = new QueryRepo();
@@ -22,10 +24,10 @@ const auth =  new Auth(usersService, authService, queryRepo);
 authRouter
     .post('/registration', antiClicker, userInputValidation, auth.registerNewUser)
     .post('/registration-confirmation', antiClicker, codeValidation, auth.registrationConfirmation)
-    .post('/registration-email-resending',antiClicker, auth.resendEmailConfirmationCode)
-    .post('/login', antiClicker, auth.loginUser)
-    .post('/password-recovery', antiClicker, auth.recoveryPassword)
-    .post('/new-password', antiClicker, auth.setNewPassword)
+    .post('/registration-email-resending',antiClicker, emailValidation, auth.resendEmailConfirmationCode)
+    .post('/login', antiClicker, inputAuthValidation, auth.loginUser)
+    .post('/password-recovery', antiClicker, emailValidation, auth.recoveryPassword)
+    .post('/new-password', antiClicker, passwordRecoveryValidation, auth.setNewPassword)
     .post('/refresh-token', auth.refreshAccess)
     .post('/logout',auth.logoutUser)
     .get('/me', bearerGuard, auth.getMyInfo)

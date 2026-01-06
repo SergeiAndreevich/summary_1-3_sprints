@@ -4,6 +4,8 @@ import {QueryRepo} from "../classes/QueryRepo.class";
 import {UsersService} from "../classes/Users/UsersService.class";
 import {UsersRepo} from "../classes/Users/UsersRepo.class";
 import {SessionsRepo} from "../classes/Session/SessionsRepo.class";
+import {userInputValidation} from "../core/middlewares/userRouterValidators/userInput.validation";
+import {idValidation} from "../core/middlewares/userRouterValidators/userId.validation";
 
 
 const userRouter = Router({})
@@ -14,6 +16,6 @@ const usersService = new UsersService(queryRepo,usersRepo,sessionsRepo);
 const userHandler = new UserHandler(usersService,queryRepo);
 
 userRouter
-    .post('/', userHandler.createUser)
+    .post('/', userInputValidation, userHandler.createUser)
     .get('/', userHandler.getAllUsers)
-    .delete('/:id', userHandler.deleteSpecificUserById)
+    .delete('/:id', idValidation, userHandler.deleteSpecificUserById)
