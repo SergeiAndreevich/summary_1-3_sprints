@@ -27,12 +27,6 @@ export class PostsRepo {
             {$set: dto})
         return result.matchedCount === 1
     }
-    async changeReactionByPostId(postId:string, userId:string,  reaction:TypeReactionInput){
-        const isUpdated = await ReactionModel.updateOne(
-            {entityId:postId, entityType: EntitiesForReaction.post, userId:userId},
-            {$set: {status: reaction}})
-        return isUpdated.modifiedCount === 1
-    }
 
     async findPostById(postId: string){
         const post = await PostModel.findById(postId).lean<WithMongoId<TypePostDB>>();

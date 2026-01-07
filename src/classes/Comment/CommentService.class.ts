@@ -4,10 +4,12 @@ import {IResult} from "../../settings/types/resultObject";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settings/types/reaction.types";
 import {likesCounterHelper} from "../../core/helpers/likeCounter.helper";
+import {ReactionsRepo} from "../ReactionsRepo.class";
 
 
 export class CommentService {
-    constructor(private commentRepo: CommentRepo) {}
+    constructor(private commentRepo: CommentRepo,
+                private reactionsRepo: ReactionsRepo) {}
 
     async changeCommentByCommentId(commentId: string, input: TypeCommentInput, userId: string):Promise<IResult<null>> {
         const comment = await this.commentRepo.findCommentById(commentId);
@@ -25,7 +27,14 @@ export class CommentService {
         if(!comment){
             return {data: null, status: httpStatus.NotFound, error: {field: 'commentId', message: 'Comment not found'}}
         }
-        const isUpdated = await this.commentRepo.changeCommentReaction(commentId, input, userId);
+        const isUpdated = await this.reactionsRepo.toggleReaction(commentId, EntitiesForReaction.comment, userId, input.LikeStatus);
+        if (isUpdated === false) {
+            return {
+                data: null,
+                status: httpStatus.ExtraError,
+                error: { field: 'reaction', message: 'Reaction not changed' }
+            };
+        }
         return {data: null, status: httpStatus.NoContent}
     }
 
@@ -43,7 +52,7 @@ export class CommentService {
             likesInfo: {
                 likesCount: reactionMap[commentId]?.likes ?? 0,
                 dislikesCount: reactionMap[commentId]?.dislikes ?? 0,
-                myStatus: userId? myStatusMap[commentId] : ReactionType.none
+                myStatus:  myStatusMap[commentId] ?? ReactionType.none
             }
         }
         return {data: commentToView, status:httpStatus.Ok}

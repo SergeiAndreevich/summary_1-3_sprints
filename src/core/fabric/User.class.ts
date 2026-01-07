@@ -1,13 +1,13 @@
-import {TypeDBUser} from "../../settings/types/user.types";
+import {TypeDBUser, TypeDBUserWithMeta} from "../../settings/types/user.types";
 import { v4 as uuidv4 } from "uuid";
 import { add } from "date-fns";
 
 
 export class User {
-    constructor(private props: TypeDBUser) {}
+    constructor(private props: TypeDBUserWithMeta) {}
 
     static create(login: string, email: string, password: string): User {
-        const userProps:TypeDBUser = {
+        const userProps:TypeDBUserWithMeta = {
             accountData: {
                 login,
                 email,
@@ -29,7 +29,7 @@ export class User {
         }
         return new User(userProps)
     }
-    toDB(): TypeDBUser{
+    toDB(): TypeDBUserWithMeta{
       return this.props
     }
 }

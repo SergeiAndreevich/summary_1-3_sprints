@@ -26,8 +26,6 @@ export type TypeDBUser = {
     }
 }
 export type TypeDBUserWithMeta = {
-    createdAt: Date,
-    updatedAt: Date,
     accountData: {
         login: string
         email: string

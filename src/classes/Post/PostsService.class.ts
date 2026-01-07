@@ -8,11 +8,13 @@ import {CommentRepo} from "../Comment/CommentRepo.class";
 import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settings/types/reaction.types";
 import {likesCounterHelper} from "../../core/helpers/likeCounter.helper";
 import {IPAginationAndSorting, TypePaginatorObject} from "../../settings/types/pagination.types";
+import {ReactionsRepo} from "../ReactionsRepo.class";
 
 export class PostsService {
     constructor(private postsRepo: PostsRepo,
                 private usersRepo: UsersRepo,
-                private commentRepo: CommentRepo){}
+                private commentRepo: CommentRepo,
+                private reactionsRepo: ReactionsRepo){}
     async createPost(input:TypePostInput): Promise<IResult<null | TypePostView>>{
         const post = await this.postsRepo.createPost(input);
         if(!post){
@@ -50,7 +52,7 @@ export class PostsService {
         if(!post){
             return {data: null, status: httpStatus.NotFound, error: {field: 'postId', message: 'Post not found'}};
         }
-        const result = await this.postsRepo.changeReactionByPostId(postId, userId, input);
+        const result = await this.reactionsRepo.toggleReaction(postId, EntitiesForReaction.post, userId, input.LikeStatus);
         if(!result){
             return {data: null, status: httpStatus.ExtraError, error: {field: 'database', message: 'Reaction not updated'}};
         }

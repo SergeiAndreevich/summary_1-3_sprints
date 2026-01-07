@@ -33,7 +33,7 @@ export class BlogService {
         return {data: null, status: httpStatus.NoContent}
     }
     async deleteSpecificBlog(blogId: string){
-        const blog = await this.blogRepo.findBlogById(blogId);
+        const blog = await this.blogRepo.deleteSpecificBlog(blogId);
         if(!blog){
             return {data: null, status: httpStatus.NotFound, error: {field: 'blogId',  message: 'blog not found'}};
         }

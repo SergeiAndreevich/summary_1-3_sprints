@@ -8,15 +8,18 @@ import {CommentRepo} from "../classes/Comment/CommentRepo.class";
 import {idValidation} from "../core/middlewares/commentRouterValidators/id.validation";
 import {commentInputValidation} from "../core/middlewares/postRouterValidators/commentInput.validation";
 import {likeStatusValidation} from "../core/middlewares/postRouterValidators/likeStatus.validation";
+import {ReactionsRepo} from "../classes/ReactionsRepo.class";
+import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
 const commentRouter = Router({});
 const queryRepo = new  QueryRepo();
 const commentRepo = new CommentRepo();
-const commentService = new CommentService(commentRepo)
+const reactionsRepo = new ReactionsRepo();
+const commentService = new CommentService(commentRepo, reactionsRepo);
 const commentsHandler = new CommentHandler(queryRepo, commentService);
 
 commentRouter
-    .put('/:commentId', bearerGuard, commentIdValidation, commentInputValidation, commentsHandler.changeCommentByCommentId)
-    .put('/:commentId/like-status', bearerGuard, commentIdValidation, likeStatusValidation, commentsHandler.changeCommentReaction)
-    .get('/:id',optionalBearerGuard, idValidation, commentsHandler.findCommentById)
-    .delete('/:commentId', bearerGuard, commentIdValidation, commentsHandler.removeCommentByCommentId)
+    .put('/:commentId', bearerGuard, commentIdValidation, commentInputValidation, checkValidationErrors, commentsHandler.changeCommentByCommentId)
+    .put('/:commentId/like-status', bearerGuard, commentIdValidation, likeStatusValidation,  checkValidationErrors, commentsHandler.changeCommentReaction)
+    .get('/:id',optionalBearerGuard, idValidation,  checkValidationErrors, commentsHandler.findCommentById)
+    .delete('/:commentId', bearerGuard, commentIdValidation, checkValidationErrors, commentsHandler.removeCommentByCommentId)

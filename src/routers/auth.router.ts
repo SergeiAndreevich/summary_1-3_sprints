@@ -12,6 +12,7 @@ import {codeValidation, emailValidation} from "../core/middlewares/userRouterVal
 import {bearerGuard} from "../core/middlewares/guard/bearerAuthorization";
 import {inputAuthValidation} from "../core/middlewares/userRouterValidators/authInput.validation";
 import {passwordRecoveryValidation} from "../core/middlewares/userRouterValidators/passwordRecovery.validation";
+import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
 export const authRouter = Router({});
 const queryRepo = new QueryRepo();
@@ -22,12 +23,12 @@ const usersService = new UsersService(queryRepo, usersRepo, sessionsRepo);
 const authService = new AuthService(authRepo, sessionsRepo);
 const auth =  new Auth(usersService, authService, queryRepo);
 authRouter
-    .post('/registration', antiClicker, userInputValidation, auth.registerNewUser)
-    .post('/registration-confirmation', antiClicker, codeValidation, auth.registrationConfirmation)
-    .post('/registration-email-resending',antiClicker, emailValidation, auth.resendEmailConfirmationCode)
-    .post('/login', antiClicker, inputAuthValidation, auth.loginUser)
-    .post('/password-recovery', antiClicker, emailValidation, auth.recoveryPassword)
-    .post('/new-password', antiClicker, passwordRecoveryValidation, auth.setNewPassword)
+    .post('/registration', antiClicker, userInputValidation, checkValidationErrors, auth.registerNewUser)
+    .post('/registration-confirmation', antiClicker, codeValidation, checkValidationErrors, auth.registrationConfirmation)
+    .post('/registration-email-resending',antiClicker, emailValidation, checkValidationErrors, auth.resendEmailConfirmationCode)
+    .post('/login', antiClicker, inputAuthValidation, checkValidationErrors, auth.loginUser)
+    .post('/password-recovery', antiClicker, emailValidation, checkValidationErrors, auth.recoveryPassword)
+    .post('/new-password', antiClicker, passwordRecoveryValidation, checkValidationErrors, auth.setNewPassword)
     .post('/refresh-token', auth.refreshAccess)
     .post('/logout',auth.logoutUser)
     .get('/me', bearerGuard, auth.getMyInfo)

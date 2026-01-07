@@ -82,13 +82,6 @@ export class CommentRepo {
             {$set: {content: dto.content}});
         return isUpdated.modifiedCount === 1
     }
-    async changeCommentReaction(commentId:string, dto: TypeReactionInput, userId:string){
-        const isUpdated = await ReactionModel.updateOne(
-            {_entityId:commentId, entityType: EntitiesForReaction.comment, userId: userId},
-            {$set:{status:dto.LikeStatus}}
-        )
-        return isUpdated.modifiedCount === 1
-    }
 
     async removeCommentByCommentId(commentId:string, userId:string){
         const comment = await CommentModel.findOne({_id: new ObjectId(commentId), "commentatorInfo.userId": userId}).lean<WithMongoId<TypeCommentDB>>();
