@@ -8,6 +8,8 @@ const blogFrontView_mapper_1 = require("../core/mappers/blogFrontView.mapper");
 const PostModel_mongoose_1 = require("../settings/database/PostModel.mongoose");
 const likeCounter_helper_1 = require("../core/helpers/likeCounter.helper");
 const reaction_types_1 = require("../settings/types/reaction.types");
+const SessionModel_mongoose_1 = require("../settings/database/SessionModel.mongoose");
+const mapSessionToView_mapper_1 = require("../core/mappers/mapSessionToView.mapper");
 class QueryRepo {
     async findUserByLoginOrEmail(login, email) {
         const user = await UserModel_mongoose_1.UserModel.findOne({ $or: [
@@ -145,6 +147,13 @@ class QueryRepo {
             items: items.map((item) => (0, blogFrontView_mapper_1.mapBlogToFrontView)(item))
         };
         return blogsToView;
+    }
+    async findSessionByDeviceId(deviceId) {
+        const session = await SessionModel_mongoose_1.SessionModel.findOne({ deviceId: deviceId }).lean();
+        if (!session) {
+            return null;
+        }
+        return (0, mapSessionToView_mapper_1.mapSessionToView)(session);
     }
 }
 exports.QueryRepo = QueryRepo;

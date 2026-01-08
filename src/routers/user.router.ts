@@ -9,7 +9,7 @@ import {idValidation} from "../core/middlewares/userRouterValidators/userId.vali
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
 
-const userRouter = Router({})
+export const userRouter = Router({})
 const queryRepo = new QueryRepo();
 const usersRepo = new UsersRepo();
 const sessionsRepo = new SessionsRepo();

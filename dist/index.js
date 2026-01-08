@@ -10,7 +10,7 @@ async function main() {
     const app = (0, express_1.default)(); //создали экземпляр приложения
     app.set('trust proxy', true);
     (0, setupApp_1.setupApp)(app); //в отдельной функции подключили middleware и роуты
-    const PORT = process.env.PORT || 8080; //выделили порт для приложения
+    const PORT = process.env.PORT || 5005; //выделили порт для приложения
     //подключаем mongoose
     await (0, db_settings_1.runMongoose)();
     //и начали слушать, ждать команд для исполнения

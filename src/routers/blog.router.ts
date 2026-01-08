@@ -11,7 +11,7 @@ import {postToBlogInputValidation} from "../core/middlewares/blogRouterValidator
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
 
-const blogRouter = Router({});
+export const blogRouter = Router({});
 const queryRepo = new QueryRepo();
 const blogRepo = new BlogRepo();
 const blogService = new BlogService(blogRepo);

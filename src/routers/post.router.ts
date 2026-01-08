@@ -16,7 +16,7 @@ import {ReactionsRepo} from "../classes/ReactionsRepo.class";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
 
-const postRouter = Router({});
+export const postRouter = Router({});
 const queryRepo = new QueryRepo();
 const postsRepo = new PostsRepo();
 const commentRepo = new CommentRepo();

@@ -15,6 +15,7 @@ const emailCode_validation_1 = require("../core/middlewares/userRouterValidators
 const bearerAuthorization_1 = require("../core/middlewares/guard/bearerAuthorization");
 const authInput_validation_1 = require("../core/middlewares/userRouterValidators/authInput.validation");
 const passwordRecovery_validation_1 = require("../core/middlewares/userRouterValidators/passwordRecovery.validation");
+const errors_middleware_1 = require("../core/middlewares/errors.middleware");
 exports.authRouter = (0, express_1.Router)({});
 const queryRepo = new QueryRepo_class_1.QueryRepo();
 const usersRepo = new UsersRepo_class_1.UsersRepo();
@@ -24,12 +25,12 @@ const usersService = new UsersService_class_1.UsersService(queryRepo, usersRepo,
 const authService = new AuthService_class_1.AuthService(authRepo, sessionsRepo);
 const auth = new AuthHandler_class_1.Auth(usersService, authService, queryRepo);
 exports.authRouter
-    .post('/registration', anti_clicker_middleware_1.antiClicker, userInput_validation_1.userInputValidation, auth.registerNewUser)
-    .post('/registration-confirmation', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.codeValidation, auth.registrationConfirmation)
-    .post('/registration-email-resending', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, auth.resendEmailConfirmationCode)
-    .post('/login', anti_clicker_middleware_1.antiClicker, authInput_validation_1.inputAuthValidation, auth.loginUser)
-    .post('/password-recovery', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, auth.recoveryPassword)
-    .post('/new-password', anti_clicker_middleware_1.antiClicker, passwordRecovery_validation_1.passwordRecoveryValidation, auth.setNewPassword)
+    .post('/registration', anti_clicker_middleware_1.antiClicker, userInput_validation_1.userInputValidation, errors_middleware_1.checkValidationErrors, auth.registerNewUser)
+    .post('/registration-confirmation', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.codeValidation, errors_middleware_1.checkValidationErrors, auth.registrationConfirmation)
+    .post('/registration-email-resending', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, errors_middleware_1.checkValidationErrors, auth.resendEmailConfirmationCode)
+    .post('/login', anti_clicker_middleware_1.antiClicker, authInput_validation_1.inputAuthValidation, errors_middleware_1.checkValidationErrors, auth.loginUser)
+    .post('/password-recovery', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, errors_middleware_1.checkValidationErrors, auth.recoveryPassword)
+    .post('/new-password', anti_clicker_middleware_1.antiClicker, passwordRecovery_validation_1.passwordRecoveryValidation, errors_middleware_1.checkValidationErrors, auth.setNewPassword)
     .post('/refresh-token', auth.refreshAccess)
     .post('/logout', auth.logoutUser)
     .get('/me', bearerAuthorization_1.bearerGuard, auth.getMyInfo);

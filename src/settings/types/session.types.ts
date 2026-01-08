@@ -7,3 +7,10 @@ export type TypeSession = {
     expiresAt: Date;
     revoked: boolean;
 }
+
+export type TypeSessionView = {
+    ip: string,
+    title: string,
+    lastActiveDate: string,
+    deviceId: string
+}

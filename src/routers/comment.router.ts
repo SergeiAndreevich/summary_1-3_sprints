@@ -11,7 +11,7 @@ import {likeStatusValidation} from "../core/middlewares/postRouterValidators/lik
 import {ReactionsRepo} from "../classes/ReactionsRepo.class";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 
-const commentRouter = Router({});
+export const commentRouter = Router({});
 const queryRepo = new  QueryRepo();
 const commentRepo = new CommentRepo();
 const reactionsRepo = new ReactionsRepo();

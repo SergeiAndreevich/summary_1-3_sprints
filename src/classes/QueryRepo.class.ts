@@ -11,6 +11,9 @@ import {PostModel} from "../settings/database/PostModel.mongoose";
 import {TypePostDB, TypePostView} from "../settings/types/post.types";
 import {likesCounterHelper} from "../core/helpers/likeCounter.helper";
 import {EntitiesForReaction, ReactionType} from "../settings/types/reaction.types";
+import {SessionModel} from "../settings/database/SessionModel.mongoose";
+import {TypeSession} from "../settings/types/session.types";
+import {mapSessionToView} from "../core/mappers/mapSessionToView.mapper";
 
 export class QueryRepo {
     async findUserByLoginOrEmail(login:string, email: string): Promise<TypeUserFrontView | null> {
@@ -189,4 +192,11 @@ export class QueryRepo {
         return blogsToView
     }
 
+    async findSessionByDeviceId(deviceId: string){
+        const session = await SessionModel.findOne({deviceId: deviceId}).lean<WithMongoId<TypeSession>>()
+        if(!session){
+            return null
+        }
+        return mapSessionToView(session)
+    }
 }
