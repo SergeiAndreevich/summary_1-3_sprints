@@ -15,5 +15,5 @@ const sessionsHandler = new SessionsHandler(sessionsService);
 
 securityRouter
     .get('/devices', bearerGuard, sessionsHandler.findAllSessions)
-    .delete('/devices', bearerGuard, sessionsHandler.closeAllSessions)
+    .delete('/devices', bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent)
     .delete('/devices/:deviceId', bearerGuard, deviceIdValidation, checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId)

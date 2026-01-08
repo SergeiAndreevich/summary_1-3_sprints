@@ -27,8 +27,8 @@ export class SessionsRepo {
         const session = await SessionModel.findByIdAndDelete(sessionId).lean<WithMongoId<TypeSession>>()
         return session
     }
-    async closeAllSessions(userId: string){
-        await SessionModel.deleteMany({userId:userId})
+    async closeAllSessionsBesidesCurrent(userId: string, deviceId: string){
+        await SessionModel.deleteMany({userId:userId, deviceId: { $ne: deviceId }})
         return
     }
     async closeSpecificSession(userId: string, deviceId:string){

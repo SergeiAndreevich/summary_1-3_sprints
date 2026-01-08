@@ -23,8 +23,8 @@ class SessionsRepo {
         const session = await SessionModel_mongoose_1.SessionModel.findByIdAndDelete(sessionId).lean();
         return session;
     }
-    async closeAllSessions(userId) {
-        await SessionModel_mongoose_1.SessionModel.deleteMany({ userId: userId });
+    async closeAllSessionsBesidesCurrent(userId, deviceId) {
+        await SessionModel_mongoose_1.SessionModel.deleteMany({ userId: userId, deviceId: { $ne: deviceId } });
         return;
     }
     async closeSpecificSession(userId, deviceId) {

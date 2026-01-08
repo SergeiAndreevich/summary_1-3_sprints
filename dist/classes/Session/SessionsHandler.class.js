@@ -15,13 +15,18 @@ class SessionsHandler {
         const sessionsList = await this.sessionsService.findAllSessions(userId);
         res.status(httpStatuses_1.httpStatus.Ok).send(sessionsList);
     }
-    async closeAllSessions(req, res) {
+    async closeAllSessionsBesidesCurrent(req, res) {
         const userId = req.userId;
         if (userId === undefined || userId === null || userId.length === 0) {
             res.sendStatus(httpStatuses_1.httpStatus.Unauthorized);
             return;
         }
-        await this.sessionsService.closeAllSessions(userId);
+        const deviceId = req.deviceId;
+        if (deviceId === undefined || deviceId === null || deviceId.length === 0) {
+            res.sendStatus(httpStatuses_1.httpStatus.Unauthorized);
+            return;
+        }
+        await this.sessionsService.closeAllSessionsBesidesCurrent(userId, deviceId);
         res.sendStatus(httpStatuses_1.httpStatus.NoContent);
     }
     async closeSpecificSessionByDeviceId(req, res) {

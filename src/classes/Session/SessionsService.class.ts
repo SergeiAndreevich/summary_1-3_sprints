@@ -11,8 +11,8 @@ export class SessionsService {
         return result
     }
 
-    async closeAllSessions(userId: string){
-        await this.sessionsRepo.closeAllSessions(userId)
+    async closeAllSessionsBesidesCurrent(userId: string, deviceId: string){
+        await this.sessionsRepo.closeAllSessionsBesidesCurrent(userId, deviceId)
         return
     }
     async closeSpecificSessionByDeviceId(userId:string, deviceId: string):Promise<IResult<null>>{

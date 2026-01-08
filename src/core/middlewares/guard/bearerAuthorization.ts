@@ -7,6 +7,7 @@ declare global {
     namespace Express {
         interface Request {
             userId?:  string // Знак вопроса делает свойство необязательным
+            deviceId?: string
         }
     }
 }
@@ -41,6 +42,7 @@ export async function bearerGuard(req: Request, res: Response, next: NextFunctio
             return
         }
         req.userId = payload.userId;
+        req.deviceId = payload.deviceId;
         next()
 }
 

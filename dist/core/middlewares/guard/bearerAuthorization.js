@@ -30,6 +30,7 @@ async function bearerGuard(req, res, next) {
         return;
     }
     req.userId = payload.userId;
+    req.deviceId = payload.deviceId;
     next();
 }
 function optionalBearerGuard(req, res, next) {

@@ -11,8 +11,8 @@ class SessionsService {
         const result = await this.sessionsRepo.findAllSessions(userId);
         return result;
     }
-    async closeAllSessions(userId) {
-        await this.sessionsRepo.closeAllSessions(userId);
+    async closeAllSessionsBesidesCurrent(userId, deviceId) {
+        await this.sessionsRepo.closeAllSessionsBesidesCurrent(userId, deviceId);
         return;
     }
     async closeSpecificSessionByDeviceId(userId, deviceId) {

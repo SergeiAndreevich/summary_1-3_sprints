@@ -16,5 +16,5 @@ const sessionsService = new SessionsService_class_1.SessionsService(queryRepo, s
 const sessionsHandler = new SessionsHandler_class_1.SessionsHandler(sessionsService);
 exports.securityRouter
     .get('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.findAllSessions)
-    .delete('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.closeAllSessions)
+    .delete('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent)
     .delete('/devices/:deviceId', bearerAuthorization_1.bearerGuard, deviceId_validation_1.deviceIdValidation, errors_middleware_1.checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId);
