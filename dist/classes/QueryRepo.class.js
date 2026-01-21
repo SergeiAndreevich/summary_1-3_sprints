@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryRepo = void 0;
 const UserModel_mongoose_1 = require("../settings/database/UserModel.mongoose");
@@ -10,7 +16,8 @@ const likeCounter_helper_1 = require("../core/helpers/likeCounter.helper");
 const reaction_types_1 = require("../settings/types/reaction.types");
 const SessionModel_mongoose_1 = require("../settings/database/SessionModel.mongoose");
 const mapSessionToView_mapper_1 = require("../core/mappers/mapSessionToView.mapper");
-class QueryRepo {
+const inversify_1 = require("inversify");
+let QueryRepo = class QueryRepo {
     async findUserByLoginOrEmail(login, email) {
         const user = await UserModel_mongoose_1.UserModel.findOne({ $or: [
                 { 'accountData.login': login },
@@ -155,5 +162,8 @@ class QueryRepo {
         }
         return (0, mapSessionToView_mapper_1.mapSessionToView)(session);
     }
-}
+};
 exports.QueryRepo = QueryRepo;
+exports.QueryRepo = QueryRepo = __decorate([
+    (0, inversify_1.injectable)()
+], QueryRepo);

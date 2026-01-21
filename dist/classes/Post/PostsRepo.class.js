@@ -1,11 +1,18 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsRepo = void 0;
 const Post_class_1 = require("../../core/fabric/Post.class");
 const BlogModel_mongoose_1 = require("../../settings/database/BlogModel.mongoose");
 const PostModel_mongoose_1 = require("../../settings/database/PostModel.mongoose");
 const postFrontView_mapper_1 = require("../../core/mappers/postFrontView.mapper");
-class PostsRepo {
+const inversify_1 = require("inversify");
+let PostsRepo = class PostsRepo {
     async createPost(dto) {
         const blog = await BlogModel_mongoose_1.BlogModel.findById(dto.blogId).lean();
         if (!blog) {
@@ -61,5 +68,8 @@ class PostsRepo {
         const post = await PostModel_mongoose_1.PostModel.findByIdAndDelete(postId).lean();
         return post;
     }
-}
+};
 exports.PostsRepo = PostsRepo;
+exports.PostsRepo = PostsRepo = __decorate([
+    (0, inversify_1.injectable)()
+], PostsRepo);

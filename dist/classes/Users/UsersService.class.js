@@ -1,13 +1,29 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const httpStatuses_1 = require("../../settings/types/httpStatuses");
+const QueryRepo_class_1 = require("../QueryRepo.class");
 const bcrypt_helper_1 = require("../../core/helpers/bcrypt.helper");
+const UsersRepo_class_1 = require("./UsersRepo.class");
 const jwt_helper_1 = require("../../core/helpers/jwt.helper");
 const Session_class_1 = require("../../core/fabric/Session.class");
+const SessionsRepo_class_1 = require("../Session/SessionsRepo.class");
 const User_class_1 = require("../../core/fabric/User.class");
 const uuid_1 = require("uuid");
-class UsersService {
+const inversify_1 = require("inversify");
+let UsersService = class UsersService {
     constructor(queryRepo, usersRepo, sessionsRepo) {
         this.queryRepo = queryRepo;
         this.usersRepo = usersRepo;
@@ -80,5 +96,14 @@ class UsersService {
         await this.sessionsRepo.createSession(session);
         return { data: { accessToken, refreshToken: refreshTokenWithMeta.token }, status: httpStatuses_1.httpStatus.Ok };
     }
-}
+};
 exports.UsersService = UsersService;
+exports.UsersService = UsersService = __decorate([
+    (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(QueryRepo_class_1.QueryRepo)),
+    __param(1, (0, inversify_1.inject)(UsersRepo_class_1.UsersRepo)),
+    __param(2, (0, inversify_1.inject)(SessionsRepo_class_1.SessionsRepo)),
+    __metadata("design:paramtypes", [QueryRepo_class_1.QueryRepo,
+        UsersRepo_class_1.UsersRepo,
+        SessionsRepo_class_1.SessionsRepo])
+], UsersService);

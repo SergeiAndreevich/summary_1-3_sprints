@@ -10,13 +10,10 @@ import {commentInputValidation} from "../core/middlewares/postRouterValidators/c
 import {likeStatusValidation} from "../core/middlewares/postRouterValidators/likeStatus.validation";
 import {ReactionsRepo} from "../classes/ReactionsRepo.class";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
+import {container} from "../composition-root";
 
 export const commentRouter = Router({});
-const queryRepo = new  QueryRepo();
-const commentRepo = new CommentRepo();
-const reactionsRepo = new ReactionsRepo();
-const commentService = new CommentService(commentRepo, reactionsRepo);
-const commentsHandler = new CommentHandler(queryRepo, commentService);
+const commentsHandler = container.get(CommentHandler);
 
 commentRouter
     .put('/:commentId', bearerGuard, commentIdValidation, commentInputValidation, checkValidationErrors, commentsHandler.changeCommentByCommentId)

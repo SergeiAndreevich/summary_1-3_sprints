@@ -1,9 +1,16 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthRepo = void 0;
 const UserModel_mongoose_1 = require("../../settings/database/UserModel.mongoose");
 const date_fns_1 = require("date-fns");
-class AuthRepo {
+const inversify_1 = require("inversify");
+let AuthRepo = class AuthRepo {
     async recoveryPassword(email, confirmationCode) {
         //проверяем, есть ли такой email
         const user = await UserModel_mongoose_1.UserModel.findOne({ "accountData.email": email });
@@ -37,5 +44,8 @@ class AuthRepo {
         const isSet = await UserModel_mongoose_1.UserModel.updateOne({ _id: user._id }, { $set: { "accountData.password": newPassword, "passwordRecovery.confirmationCode": recoveryCode, "passwordRecovery.isConfirmed": true } });
         return isSet.matchedCount === 1;
     }
-}
+};
 exports.AuthRepo = AuthRepo;
+exports.AuthRepo = AuthRepo = __decorate([
+    (0, inversify_1.injectable)()
+], AuthRepo);

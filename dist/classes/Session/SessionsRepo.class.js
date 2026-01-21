@@ -1,9 +1,16 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionsRepo = void 0;
 const SessionModel_mongoose_1 = require("../../settings/database/SessionModel.mongoose");
 const mapSessionToView_mapper_1 = require("../../core/mappers/mapSessionToView.mapper");
-class SessionsRepo {
+const inversify_1 = require("inversify");
+let SessionsRepo = class SessionsRepo {
     async createSession(session) {
         await SessionModel_mongoose_1.SessionModel.create(session.toDb());
         return;
@@ -35,5 +42,8 @@ class SessionsRepo {
         await this.removeSession(session._id);
         return session;
     }
-}
+};
 exports.SessionsRepo = SessionsRepo;
+exports.SessionsRepo = SessionsRepo = __decorate([
+    (0, inversify_1.injectable)()
+], SessionsRepo);
