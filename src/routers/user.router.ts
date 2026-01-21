@@ -7,14 +7,11 @@ import {SessionsRepo} from "../classes/Session/SessionsRepo.class";
 import {userInputValidation} from "../core/middlewares/userRouterValidators/userInput.validation";
 import {idValidation} from "../core/middlewares/userRouterValidators/userId.validation";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
+import {container} from "../composition-root";
 
 
 export const userRouter = Router({})
-const queryRepo = new QueryRepo();
-const usersRepo = new UsersRepo();
-const sessionsRepo = new SessionsRepo();
-const usersService = new UsersService(queryRepo,usersRepo,sessionsRepo);
-const userHandler = new UserHandler(usersService,queryRepo);
+const userHandler = container.get(UserHandler);
 
 userRouter
     .post('/', userInputValidation,  checkValidationErrors, userHandler.createUser)
