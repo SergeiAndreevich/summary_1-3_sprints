@@ -6,10 +6,12 @@ import {TypePostInputForBlog} from "../../settings/types/post.types";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {paginationHelper} from "../../core/helpers/pagination.helper";
 import {IPAginationAndSorting} from "../../settings/types/pagination.types";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class BlogHandler {
-    constructor(private queryRepo: QueryRepo,
-                private blogService: BlogService) {}
+    constructor(@inject(QueryRepo) private queryRepo: QueryRepo,
+                @inject(BlogService) private blogService: BlogService) {}
     async createBlog(req: Request, res: Response){
         const input:TypeBlogInput = req.body;
         const result = await this.blogService.createBlog(input);

@@ -1,4 +1,3 @@
-import {QueryRepo} from "../QueryRepo.class";
 import {Request, Response} from "express";
 import {TypePostInput} from "../../settings/types/post.types";
 import {PostsService} from "./PostsService.class";
@@ -7,10 +6,11 @@ import {TypeCommentInput} from "../../settings/types/comment.types";
 import {TypeReactionInput} from "../../settings/types/reaction.types";
 import {paginationHelper} from "../../core/helpers/pagination.helper";
 import {IPAginationAndSorting} from "../../settings/types/pagination.types";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostHandler{
-    constructor(private queryRepo: QueryRepo,
-                private postsService: PostsService) {}
+    constructor(@inject(PostsService) private postsService: PostsService) {}
     async createPost(req:Request, res: Response){
         const input:TypePostInput = req.body;
         const result = await this.postsService.createPost(input);

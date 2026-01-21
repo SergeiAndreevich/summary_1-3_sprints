@@ -5,10 +5,12 @@ import {TypeUserInput} from "../../settings/types/user.types";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {paginationHelper} from "../../core/helpers/pagination.helper";
 import {IPAginationAndSorting} from "../../settings/types/pagination.types";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class UserHandler {
-    constructor(protected usersService: UsersService,
-                protected queryRepo: QueryRepo) {}
+    constructor(@inject(UsersService) protected usersService: UsersService,
+                @inject(QueryRepo) protected queryRepo: QueryRepo) {}
     async createUser(req: Request, res: Response) {
         const userInput:TypeUserInput = req.body;
         const result = await this.usersService.createUser(userInput);

@@ -9,12 +9,14 @@ import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settin
 import {likesCounterHelper} from "../../core/helpers/likeCounter.helper";
 import {IPAginationAndSorting, TypePaginatorObject} from "../../settings/types/pagination.types";
 import {ReactionsRepo} from "../ReactionsRepo.class";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostsService {
-    constructor(private postsRepo: PostsRepo,
-                private usersRepo: UsersRepo,
-                private commentRepo: CommentRepo,
-                private reactionsRepo: ReactionsRepo){}
+    constructor(@inject(PostsRepo) private postsRepo: PostsRepo,
+                @inject(UsersRepo) private usersRepo: UsersRepo,
+                @inject(CommentRepo) private commentRepo: CommentRepo,
+                @inject(ReactionsRepo) private reactionsRepo: ReactionsRepo){}
     async createPost(input:TypePostInput): Promise<IResult<null | TypePostView>>{
         const post = await this.postsRepo.createPost(input);
         if(!post){

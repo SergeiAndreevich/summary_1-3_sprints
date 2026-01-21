@@ -7,10 +7,12 @@ import {TypeTokens} from "../../settings/types/auth.types";
 import {jwtHelper} from "../../core/helpers/jwt.helper";
 import {SessionsRepo} from "../Session/SessionsRepo.class";
 import {Session} from "../../core/fabric/Session.class";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class AuthService {
-    constructor(private authRepo: AuthRepo,
-                private sessionsRepo: SessionsRepo){}
+    constructor(@inject(AuthRepo) private authRepo: AuthRepo,
+                @inject(SessionsRepo) private sessionsRepo: SessionsRepo){}
     async recoveryPassword(email:string) {
         //отдаем в repository и если такой есть, то отправляем туда код
         const confirmationCode = v4();

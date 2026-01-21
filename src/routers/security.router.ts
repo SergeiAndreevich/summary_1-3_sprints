@@ -6,12 +6,10 @@ import {SessionsHandler} from "../classes/Session/SessionsHandler.class";
 import {deviceIdValidation} from "../core/middlewares/sessionsValidators/deviceId.validation";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
 import {QueryRepo} from "../classes/QueryRepo.class";
+import {container} from "../composition-root";
 
 export const securityRouter = Router({});
-const queryRepo = new QueryRepo();
-const sessionsRepo = new SessionsRepo();
-const sessionsService = new SessionsService(queryRepo,sessionsRepo);
-const sessionsHandler = new SessionsHandler(sessionsService);
+const sessionsHandler = container.get(SessionsHandler);
 
 securityRouter
     .get('/devices', bearerGuard, sessionsHandler.findAllSessions)

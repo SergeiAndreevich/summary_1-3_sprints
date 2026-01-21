@@ -18,10 +18,10 @@ const blogRepo = new BlogRepo_class_1.BlogRepo();
 const blogService = new BlogService_class_1.BlogService(blogRepo);
 const blogHandler = new BlogHandler_class_1.BlogHandler(queryRepo, blogService);
 exports.blogRouter
-    .post('/', basicAuthorization_1.basicGuard, blogInput_validation_1.blogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.createBlog)
-    .post('/:blogId/posts', basicAuthorization_1.basicGuard, blogId_validation_1.blogIdValidation, postToBlogInput_validation_1.postToBlogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.createPostForSpecificBlog)
-    .put('/:id', basicAuthorization_1.basicGuard, id_validation_1.idValidation, blogInput_validation_1.blogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.changeBlogById)
-    .get('/:id', id_validation_1.idValidation, errors_middleware_1.checkValidationErrors, blogHandler.findSpecificBlogById)
-    .get('/:blogId/posts', blogId_validation_1.blogIdValidation, errors_middleware_1.checkValidationErrors, blogHandler.findPostsForSpecificBlogId)
+    .post('/', basicAuthorization_1.basicGuard, blogInput_validation_1.blogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.createBlog.bind(blogHandler))
+    .post('/:blogId/posts', basicAuthorization_1.basicGuard, blogId_validation_1.blogIdValidation, postToBlogInput_validation_1.postToBlogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.createPostForSpecificBlog.bind(blogHandler))
+    .put('/:id', basicAuthorization_1.basicGuard, id_validation_1.idValidation, blogInput_validation_1.blogInputValidation, errors_middleware_1.checkValidationErrors, blogHandler.changeBlogById.bind(blogHandler))
+    .get('/:id', id_validation_1.idValidation, errors_middleware_1.checkValidationErrors, blogHandler.findSpecificBlogById.bind(blogHandler))
+    .get('/:blogId/posts', blogId_validation_1.blogIdValidation, errors_middleware_1.checkValidationErrors, blogHandler.findPostsForSpecificBlogId.bind(blogHandler))
     .get('/', blogHandler.findBlogsByFilter)
     .delete('/:id', id_validation_1.idValidation, errors_middleware_1.checkValidationErrors, blogHandler.deleteSpecificBlog);

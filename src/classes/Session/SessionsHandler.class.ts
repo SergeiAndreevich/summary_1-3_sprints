@@ -1,9 +1,11 @@
 import {Request, Response} from "express";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {SessionsService} from "./SessionsService.class";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class SessionsHandler {
-    constructor(private sessionsService: SessionsService ){}
+    constructor(@inject(SessionsService) private sessionsService: SessionsService ){}
     async findAllSessions(req:Request, res: Response){
         const userId = req.userId;
         if(userId === undefined || userId === null || userId.length === 0) {

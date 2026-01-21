@@ -10,11 +10,13 @@ import {SessionsRepo} from "../Session/SessionsRepo.class";
 import {TypeUserFrontView} from "../../settings/types/user.types";
 import {User} from "../../core/fabric/User.class";
 import {v4 as uuiv4} from "uuid";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class UsersService {
-    constructor(private queryRepo: QueryRepo,
-                private usersRepo: UsersRepo,
-                private sessionsRepo: SessionsRepo){}
+    constructor(@inject(QueryRepo) private queryRepo: QueryRepo,
+                @inject(UsersRepo) private usersRepo: UsersRepo,
+                @inject(SessionsRepo) private sessionsRepo: SessionsRepo){}
     async createUser(dto:TypeRegistrationInput):Promise<IResult<TypeUserFrontView | null>>{
         const userByLoginOrEmail = await this.queryRepo.findUserByLoginOrEmail(dto.login, dto.email);
         if(userByLoginOrEmail) {

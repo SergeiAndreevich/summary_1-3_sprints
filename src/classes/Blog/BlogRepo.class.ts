@@ -7,7 +7,9 @@ import {PostModel} from "../../settings/database/PostModel.mongoose";
 import {Post} from "../../core/fabric/Post.class";
 import {mapNewPostForView} from "../../core/mappers/postFrontView.mapper";
 import {WithMongoId} from "../../settings/database/db_settings";
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogRepo {
     async createBlog(dto: TypeBlogInput) {
         const blog = Blog.create(dto);

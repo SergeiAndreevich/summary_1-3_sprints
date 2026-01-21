@@ -13,15 +13,11 @@ import {bearerGuard} from "../core/middlewares/guard/bearerAuthorization";
 import {inputAuthValidation} from "../core/middlewares/userRouterValidators/authInput.validation";
 import {passwordRecoveryValidation} from "../core/middlewares/userRouterValidators/passwordRecovery.validation";
 import {checkValidationErrors} from "../core/middlewares/errors.middleware";
+import {container} from "../composition-root";
 
 export const authRouter = Router({});
-const queryRepo = new QueryRepo();
-const usersRepo = new UsersRepo();
-const sessionsRepo = new SessionsRepo();
-const authRepo = new AuthRepo();
-const usersService = new UsersService(queryRepo, usersRepo, sessionsRepo);
-const authService = new AuthService(authRepo, sessionsRepo);
-const auth =  new Auth(usersService, authService, queryRepo);
+const auth =  container.get(Auth);
+
 authRouter
     .post('/registration', antiClicker, userInputValidation, checkValidationErrors, auth.registerNewUser)
     .post('/registration-confirmation', antiClicker, codeValidation, checkValidationErrors, auth.registrationConfirmation)

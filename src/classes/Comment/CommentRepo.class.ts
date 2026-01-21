@@ -10,9 +10,9 @@ import {Comment} from "../../core/fabric/Comment.class";
 import {IPAginationAndSorting} from "../../settings/types/pagination.types";
 import {WithMongoId} from "../../settings/database/db_settings";
 import {ObjectId} from "mongodb";
-import {EntitiesForReaction, TypeReactionInput} from "../../settings/types/reaction.types";
-import {ReactionModel} from "../../settings/database/ReactionModel.mongoose";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentRepo {
     async createCommentForSpecificPost(postId: string, dto: TypeCommentInput, user:TypeCommentatorInfo):Promise<TypeCommentFrontView>{
         const comment = Comment.create(postId, dto, user);

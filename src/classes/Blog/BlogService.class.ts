@@ -3,9 +3,11 @@ import {TypeBlogFrontView, TypeBlogInput} from "../../settings/types/blog.types"
 import {IResult} from "../../settings/types/resultObject";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {TypePostInputForBlog} from "../../settings/types/post.types";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class BlogService {
-    constructor(private blogRepo: BlogRepo) {}
+    constructor(@inject(BlogRepo) private blogRepo: BlogRepo) {}
     async createBlog(dto:TypeBlogInput):Promise<IResult<null | TypeBlogFrontView>>{
         const blogForView = await this.blogRepo.createBlog(dto);
         if(!blogForView){

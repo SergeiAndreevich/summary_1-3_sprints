@@ -5,11 +5,12 @@ import {httpStatus} from "../../settings/types/httpStatuses";
 import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settings/types/reaction.types";
 import {likesCounterHelper} from "../../core/helpers/likeCounter.helper";
 import {ReactionsRepo} from "../ReactionsRepo.class";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class CommentService {
-    constructor(private commentRepo: CommentRepo,
-                private reactionsRepo: ReactionsRepo) {}
+    constructor(@inject(CommentRepo) private commentRepo: CommentRepo,
+                @inject(ReactionsRepo) private reactionsRepo: ReactionsRepo) {}
 
     async changeCommentByCommentId(commentId: string, input: TypeCommentInput, userId: string):Promise<IResult<null>> {
         const comment = await this.commentRepo.findCommentById(commentId);

@@ -9,7 +9,9 @@ import {mapNewPostForView, mapPostForView} from "../../core/mappers/postFrontVie
 import {EntitiesForReaction, ReactionType, TypeReactionInput} from "../../settings/types/reaction.types";
 import {ReactionModel} from "../../settings/database/ReactionModel.mongoose";
 import {IPAginationAndSorting} from "../../settings/types/pagination.types";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsRepo {
     async createPost(dto: TypePostInput){
         const blog = await BlogModel.findById(dto.blogId).lean<WithMongoId<TypeBlogDB>>();

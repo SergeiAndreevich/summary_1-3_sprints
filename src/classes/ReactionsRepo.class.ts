@@ -1,6 +1,8 @@
 import {EntitiesForReaction, ReactionType} from "../settings/types/reaction.types";
 import {ReactionModel} from "../settings/database/ReactionModel.mongoose";
+import {injectable} from "inversify";
 
+@injectable()
 export class ReactionsRepo {
     async toggleReaction(entityId: string, entityType: EntitiesForReaction, userId:string, status:ReactionType){
         const existing = await ReactionModel.findOne({ entityId, entityType, userId });

@@ -2,8 +2,9 @@ import {UserModel} from "../../settings/database/UserModel.mongoose";
 import {add} from "date-fns";
 import {WithMongoId} from "../../settings/database/db_settings";
 import {TypeDBUser} from "../../settings/types/user.types";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class AuthRepo {
     async recoveryPassword(email:string, confirmationCode:string) {
         //проверяем, есть ли такой email

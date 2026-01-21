@@ -4,7 +4,9 @@ import {WithMongoId} from "../../settings/database/db_settings";
 import {TypeSession} from "../../settings/types/session.types";
 import {ObjectId} from "mongodb";
 import {mapSessionToView} from "../../core/mappers/mapSessionToView.mapper";
+import {injectable} from "inversify";
 
+@injectable()
 export class SessionsRepo {
     async createSession(session: Session) {
         await SessionModel.create(session.toDb());

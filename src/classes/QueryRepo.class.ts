@@ -14,7 +14,9 @@ import {EntitiesForReaction, ReactionType} from "../settings/types/reaction.type
 import {SessionModel} from "../settings/database/SessionModel.mongoose";
 import {TypeSession} from "../settings/types/session.types";
 import {mapSessionToView} from "../core/mappers/mapSessionToView.mapper";
+import {injectable} from "inversify";
 
+@injectable()
 export class QueryRepo {
     async findUserByLoginOrEmail(login:string, email: string): Promise<TypeUserFrontView | null> {
     const user = await UserModel.findOne(

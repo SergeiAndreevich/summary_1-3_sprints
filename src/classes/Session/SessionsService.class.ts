@@ -2,10 +2,12 @@ import {SessionsRepo} from "./SessionsRepo.class";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {IResult} from "../../settings/types/resultObject";
 import {QueryRepo} from "../QueryRepo.class";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class SessionsService {
-    constructor(private queryRepo: QueryRepo,
-                private sessionsRepo: SessionsRepo){}
+    constructor(@inject(QueryRepo) private queryRepo: QueryRepo,
+                @inject(SessionsRepo) private sessionsRepo: SessionsRepo){}
     async findAllSessions(userId:string){
         const result = await this.sessionsRepo.findAllSessions(userId);
         return result

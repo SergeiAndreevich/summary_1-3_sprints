@@ -4,10 +4,11 @@ import {TypeCommentInput} from "../../settings/types/comment.types";
 import {CommentService} from "./CommentService.class";
 import {httpStatus} from "../../settings/types/httpStatuses";
 import {TypeReactionInput} from "../../settings/types/reaction.types";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class CommentHandler {
-    constructor(private queryRepo: QueryRepo,
-                private commentService: CommentService) {}
+    constructor(@inject(CommentService) private commentService: CommentService) {}
 
     async changeCommentByCommentId(req: Request, res: Response) {
         const userId = req.userId;

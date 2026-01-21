@@ -9,11 +9,13 @@ import {UsersService} from "../Users/UsersService.class";
 import {IResult} from "../../settings/types/resultObject";
 import {AuthService} from "./AuthService.class";
 import {QueryRepo} from "../QueryRepo.class";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class Auth {
-    constructor(protected usersService: UsersService,
-                protected authService: AuthService,
-                protected queryRepo: QueryRepo){}
+    constructor(@inject(UsersService) protected usersService: UsersService,
+                @inject(AuthService) protected authService: AuthService,
+                @inject(QueryRepo) protected queryRepo: QueryRepo){}
     async registerNewUser(req:Request, res: Response) {
         const inputData:TypeRegistrationInput = req.body; //пришли данные для создания юзера
         const result = await this.usersService.createUser(inputData); //создаем юзера

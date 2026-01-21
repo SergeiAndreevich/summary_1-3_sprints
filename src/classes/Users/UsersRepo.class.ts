@@ -4,7 +4,9 @@ import {TypeDBUser, TypeDBUserWithMeta, TypeUserBackView, TypeUserFrontView} fro
 import {mapUserWithMeta} from "../../core/mappers/userWithMeta.mapper";
 import {mapUserToView} from "../../core/mappers/userViewModel.mapper";
 import {WithMongoId} from "../../settings/database/db_settings";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersRepo {
     async createUser(user:User):Promise<TypeUserFrontView | null>{
         const createdUser = await UserModel.create(user.toDB());
