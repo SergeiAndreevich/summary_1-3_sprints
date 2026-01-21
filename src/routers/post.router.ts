@@ -15,11 +15,11 @@ export const postRouter = Router({});
 const postHandler = container.get(PostHandler);
 
 postRouter
-    .post('/', basicGuard, postInputValidation, postHandler.createPost)
-    .post('/:postId/comments', bearerGuard, postIdValidation, commentInputValidation,  checkValidationErrors, postHandler.createCommentForSpecificPostId)
-    .put('/:id', basicGuard, idValidation, postInputValidation,  checkValidationErrors, postHandler.updatePostById)
-    .put('/:postId/like-status', bearerGuard, postIdValidation, likeStatusValidation,  checkValidationErrors, postHandler.changeReactionByPostId)
-    .get('/:id', optionalBearerGuard, idValidation,  checkValidationErrors, postHandler.findPostById)
-    .get('/:postId/comments', optionalBearerGuard, postIdValidation,  checkValidationErrors, postHandler.findCommentsByPostId)
-    .get('/', optionalBearerGuard, postHandler.findPostsByFilter)
-    .delete('/:id', idValidation, checkValidationErrors, postHandler.removePostById)
+    .post('/', basicGuard, postInputValidation, postHandler.createPost.bind(postHandler))
+    .post('/:postId/comments', bearerGuard, postIdValidation, commentInputValidation,  checkValidationErrors, postHandler.createCommentForSpecificPostId.bind(postHandler))
+    .put('/:id', basicGuard, idValidation, postInputValidation,  checkValidationErrors, postHandler.updatePostById.bind(postHandler))
+    .put('/:postId/like-status', bearerGuard, postIdValidation, likeStatusValidation,  checkValidationErrors, postHandler.changeReactionByPostId.bind(postHandler))
+    .get('/:id', optionalBearerGuard, idValidation,  checkValidationErrors, postHandler.findPostById.bind(postHandler))
+    .get('/:postId/comments', optionalBearerGuard, postIdValidation,  checkValidationErrors, postHandler.findCommentsByPostId.bind(postHandler))
+    .get('/', optionalBearerGuard, postHandler.findPostsByFilter.bind(postHandler))
+    .delete('/:id', idValidation, checkValidationErrors, postHandler.removePostById.bind(postHandler))

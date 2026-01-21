@@ -10,6 +10,6 @@ const composition_root_1 = require("../composition-root");
 exports.securityRouter = (0, express_1.Router)({});
 const sessionsHandler = composition_root_1.container.get(SessionsHandler_class_1.SessionsHandler);
 exports.securityRouter
-    .get('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.findAllSessions)
-    .delete('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent)
-    .delete('/devices/:deviceId', bearerAuthorization_1.bearerGuard, deviceId_validation_1.deviceIdValidation, errors_middleware_1.checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId);
+    .get('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.findAllSessions.bind(sessionsHandler))
+    .delete('/devices', bearerAuthorization_1.bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent.bind(sessionsHandler))
+    .delete('/devices/:deviceId', bearerAuthorization_1.bearerGuard, deviceId_validation_1.deviceIdValidation, errors_middleware_1.checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId.bind(sessionsHandler));

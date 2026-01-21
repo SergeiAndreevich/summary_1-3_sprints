@@ -10,6 +10,6 @@ const composition_root_1 = require("../composition-root");
 exports.userRouter = (0, express_1.Router)({});
 const userHandler = composition_root_1.container.get(UsersHandler_class_1.UserHandler);
 exports.userRouter
-    .post('/', userInput_validation_1.userInputValidation, errors_middleware_1.checkValidationErrors, userHandler.createUser)
-    .get('/', userHandler.getAllUsers)
-    .delete('/:id', userId_validation_1.idValidation, errors_middleware_1.checkValidationErrors, userHandler.deleteSpecificUserById);
+    .post('/', userInput_validation_1.userInputValidation, errors_middleware_1.checkValidationErrors, userHandler.createUser.bind(userHandler))
+    .get('/', userHandler.getAllUsers.bind(userHandler))
+    .delete('/:id', userId_validation_1.idValidation, errors_middleware_1.checkValidationErrors, userHandler.deleteSpecificUserById.bind(userHandler));

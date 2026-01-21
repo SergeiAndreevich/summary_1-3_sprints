@@ -14,6 +14,6 @@ export const userRouter = Router({})
 const userHandler = container.get(UserHandler);
 
 userRouter
-    .post('/', userInputValidation,  checkValidationErrors, userHandler.createUser)
-    .get('/', userHandler.getAllUsers)
-    .delete('/:id', idValidation,  checkValidationErrors, userHandler.deleteSpecificUserById)
+    .post('/', userInputValidation,  checkValidationErrors, userHandler.createUser.bind(userHandler))
+    .get('/', userHandler.getAllUsers.bind(userHandler))
+    .delete('/:id', idValidation,  checkValidationErrors, userHandler.deleteSpecificUserById.bind(userHandler))

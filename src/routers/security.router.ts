@@ -12,6 +12,6 @@ export const securityRouter = Router({});
 const sessionsHandler = container.get(SessionsHandler);
 
 securityRouter
-    .get('/devices', bearerGuard, sessionsHandler.findAllSessions)
-    .delete('/devices', bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent)
-    .delete('/devices/:deviceId', bearerGuard, deviceIdValidation, checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId)
+    .get('/devices', bearerGuard, sessionsHandler.findAllSessions.bind(sessionsHandler))
+    .delete('/devices', bearerGuard, sessionsHandler.closeAllSessionsBesidesCurrent.bind(sessionsHandler))
+    .delete('/devices/:deviceId', bearerGuard, deviceIdValidation, checkValidationErrors, sessionsHandler.closeSpecificSessionByDeviceId.bind(sessionsHandler))
