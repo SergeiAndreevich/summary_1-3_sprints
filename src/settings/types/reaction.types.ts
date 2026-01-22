@@ -5,9 +5,9 @@ export type TypeExtendedLikesInfo = {
     newestLikes: TypeLikeDetails[]
 }
 export enum ReactionType  {
-    like='like',
-    dislike='dislike',
-    none='none'
+    like='Like',
+    dislike='Dislike',
+    none='None'
 }
 export type TypeLikeDetails = {
     addedAt:Date,

@@ -29,7 +29,7 @@ export class UsersService {
             return {data: null, status: httpStatus.ExtraError,error: {field: 'database',message: 'User not created'}}
         }
         //отправить сообщение с кодом подтверждения
-        return {data: userForView, status: httpStatus.NoContent}
+        return {data: userForView, status: httpStatus.Created}
     }
 
     async deleteSpecificUser(userId:string){

@@ -26,6 +26,11 @@ let BlogHandler = class BlogHandler {
     async createBlog(req, res) {
         const input = req.body;
         const result = await this.blogService.createBlog(input);
+        if (result.status !== httpStatuses_1.httpStatus.Created) {
+            res.sendStatus(result.status);
+            return;
+        }
+        res.status(httpStatuses_1.httpStatus.Created).send(result.data);
     }
     async createPostForSpecificBlog(req, res) {
         const blogId = req.params.blogId;
