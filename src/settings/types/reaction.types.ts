@@ -33,5 +33,5 @@ export type TypeLikesInfoView = {
     myStatus: ReactionType
 }
 export type TypeReactionInput ={
-    LikeStatus: ReactionType
+    likeStatus: ReactionType
 }

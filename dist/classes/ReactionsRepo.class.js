@@ -10,11 +10,46 @@ exports.ReactionsRepo = void 0;
 const reaction_types_1 = require("../settings/types/reaction.types");
 const ReactionModel_mongoose_1 = require("../settings/database/ReactionModel.mongoose");
 const inversify_1 = require("inversify");
+const UserModel_mongoose_1 = require("../settings/database/UserModel.mongoose");
 let ReactionsRepo = class ReactionsRepo {
+    // async toggleReaction(entityId: string, entityType: EntitiesForReaction, userId:string, status:ReactionType){
+    //     const existing = await ReactionModel.findOne({ entityId, entityType, userId });
+    //
+    //     //допустим решили поставить лайк, тгда создаем запись реакции
+    //     if (!existing && status !== ReactionType.none) {
+    //         await ReactionModel.create({
+    //             entityId,
+    //             entityType,
+    //             userId,
+    //             status,
+    //             addedAt: new Date()
+    //         });
+    //         return true;
+    //     }
+    //
+    //     //вот эту логику не понимаю (может чисто обработка ошибки в БД)
+    //     if (!existing) return false;
+    //
+    //     //если запись реакции уже есть и статус совпал, например, дабл-клик на лайк
+    //     if (existing.status === status) {
+    //         await ReactionModel.deleteOne({ _id: existing._id });
+    //         return true;
+    //     }
+    //
+    //     //это если решил поменять лайк на дизлайк. Запись удалять не нужно, просто меняем статус
+    //     await ReactionModel.updateOne(
+    //         { _id: existing._id },
+    //         { $set: { status, addedAt: new Date() } }
+    //     );
+    //     return true;
+    // }
     async toggleReaction(entityId, entityType, userId, status) {
         const existing = await ReactionModel_mongoose_1.ReactionModel.findOne({ entityId, entityType, userId });
-        //допустим решили поставить лайк, тгда создаем запись реакции
-        if (!existing && status !== reaction_types_1.ReactionType.none) {
+        const user = await UserModel_mongoose_1.UserModel.findById(userId).lean();
+        // нет реакции
+        if (!existing) {
+            if (status === reaction_types_1.ReactionType.none)
+                return true;
             await ReactionModel_mongoose_1.ReactionModel.create({
                 entityId,
                 entityType,
@@ -24,15 +59,16 @@ let ReactionsRepo = class ReactionsRepo {
             });
             return true;
         }
-        //вот эту логику не понимаю (может чисто обработка ошибки в БД)
-        if (!existing)
-            return false;
-        //если запись реакции уже есть и статус совпал, например, дабл-клик на лайк
-        if (existing.status === status) {
+        // есть реакция
+        if (status === reaction_types_1.ReactionType.none) {
             await ReactionModel_mongoose_1.ReactionModel.deleteOne({ _id: existing._id });
             return true;
         }
-        //это если решил поменять лайк на дизлайк. Запись удалять не нужно, просто меняем статус
+        // статус не изменился → ничего не делаем
+        if (existing.status === status) {
+            return true;
+        }
+        // смена лайк ↔ дизлайк
         await ReactionModel_mongoose_1.ReactionModel.updateOne({ _id: existing._id }, { $set: { status, addedAt: new Date() } });
         return true;
     }

@@ -17,7 +17,7 @@ exports.authRouter
     .post('/registration', anti_clicker_middleware_1.antiClicker, userInput_validation_1.userInputValidation, errors_middleware_1.checkValidationErrors, auth.registerNewUser.bind(auth))
     .post('/registration-confirmation', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.codeValidation, errors_middleware_1.checkValidationErrors, auth.registrationConfirmation.bind(auth))
     .post('/registration-email-resending', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, errors_middleware_1.checkValidationErrors, auth.resendEmailConfirmationCode.bind(auth))
-    .post('/login', anti_clicker_middleware_1.antiClicker, authInput_validation_1.inputAuthValidation, errors_middleware_1.checkValidationErrors, auth.loginUser.bind(auth))
+    .post('/login', authInput_validation_1.inputAuthValidation, errors_middleware_1.checkValidationErrors, auth.loginUser.bind(auth))
     .post('/password-recovery', anti_clicker_middleware_1.antiClicker, emailCode_validation_1.emailValidation, errors_middleware_1.checkValidationErrors, auth.recoveryPassword.bind(auth))
     .post('/new-password', anti_clicker_middleware_1.antiClicker, passwordRecovery_validation_1.passwordRecoveryValidation, errors_middleware_1.checkValidationErrors, auth.setNewPassword.bind(auth))
     .post('/refresh-token', auth.refreshAccess.bind(auth))

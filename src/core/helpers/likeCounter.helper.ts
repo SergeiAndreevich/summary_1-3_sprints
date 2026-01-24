@@ -1,6 +1,8 @@
 import {EntitiesForReaction, ReactionType, TypeLikeDetails} from "../../settings/types/reaction.types";
 import {ReactionModel} from "../../settings/database/ReactionModel.mongoose";
 import {WithMongoId} from "../../settings/database/db_settings";
+import {UserModel} from "../../settings/database/UserModel.mongoose";
+import {TypeDBUser} from "../../settings/types/user.types";
 
 export const likesCounterHelper = {
     async getLikesForEntity(entityType:EntitiesForReaction, ids: string[], userId?:string ){
@@ -20,6 +22,7 @@ export const likesCounterHelper = {
                     newestLikes: {
                         $push: {
                             userId: '$userId',
+                            login:  '$userLogin',
                             addedAt: '$addedAt'
                         }
                     }
@@ -32,6 +35,7 @@ export const likesCounterHelper = {
                 }
             }
         ])
+
         const dislikesAggregation = await ReactionModel.aggregate([
             {
                 $match: {
@@ -81,3 +85,4 @@ export const likesCounterHelper = {
         return {reactionMap, myStatusMap}
     }
 }
+

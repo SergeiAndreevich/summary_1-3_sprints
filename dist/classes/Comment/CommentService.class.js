@@ -40,7 +40,7 @@ let CommentService = class CommentService {
         if (!comment) {
             return { data: null, status: httpStatuses_1.httpStatus.NotFound, error: { field: 'commentId', message: 'Comment not found' } };
         }
-        const isUpdated = await this.reactionsRepo.toggleReaction(commentId, reaction_types_1.EntitiesForReaction.comment, userId, input.LikeStatus);
+        const isUpdated = await this.reactionsRepo.toggleReaction(commentId, reaction_types_1.EntitiesForReaction.comment, userId, input.likeStatus);
         if (isUpdated === false) {
             return {
                 data: null,

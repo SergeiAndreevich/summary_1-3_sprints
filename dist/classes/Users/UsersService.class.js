@@ -41,7 +41,7 @@ let UsersService = class UsersService {
             return { data: null, status: httpStatuses_1.httpStatus.ExtraError, error: { field: 'database', message: 'User not created' } };
         }
         //отправить сообщение с кодом подтверждения
-        return { data: userForView, status: httpStatuses_1.httpStatus.NoContent };
+        return { data: userForView, status: httpStatuses_1.httpStatus.Created };
     }
     async deleteSpecificUser(userId) {
         const user = await this.usersRepo.deleteSpecificUser(userId);

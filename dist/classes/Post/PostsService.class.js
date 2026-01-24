@@ -64,7 +64,7 @@ let PostsService = class PostsService {
         if (!post) {
             return { data: null, status: httpStatuses_1.httpStatus.NotFound, error: { field: 'postId', message: 'Post not found' } };
         }
-        const result = await this.reactionsRepo.toggleReaction(postId, reaction_types_1.EntitiesForReaction.post, userId, input.LikeStatus);
+        const result = await this.reactionsRepo.toggleReaction(postId, reaction_types_1.EntitiesForReaction.post, userId, input.likeStatus);
         if (!result) {
             return { data: null, status: httpStatuses_1.httpStatus.ExtraError, error: { field: 'database', message: 'Reaction not updated' } };
         }

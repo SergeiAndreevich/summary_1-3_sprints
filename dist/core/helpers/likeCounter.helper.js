@@ -22,6 +22,7 @@ exports.likesCounterHelper = {
                     newestLikes: {
                         $push: {
                             userId: '$userId',
+                            login: '$userLogin',
                             addedAt: '$addedAt'
                         }
                     }

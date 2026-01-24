@@ -28,7 +28,7 @@ export class CommentService {
         if(!comment){
             return {data: null, status: httpStatus.NotFound, error: {field: 'commentId', message: 'Comment not found'}}
         }
-        const isUpdated = await this.reactionsRepo.toggleReaction(commentId, EntitiesForReaction.comment, userId, input.LikeStatus);
+        const isUpdated = await this.reactionsRepo.toggleReaction(commentId, EntitiesForReaction.comment, userId, input.likeStatus);
         if (isUpdated === false) {
             return {
                 data: null,
