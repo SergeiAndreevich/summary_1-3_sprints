@@ -13,10 +13,10 @@ export const blogRouter = Router({});
 const blogHandler = container.get(BlogHandler);
 
 blogRouter
-    .post('/', basicGuard, blogInputValidation, checkValidationErrors, blogHandler.createBlog.bind(blogHandler))
-    .post('/:blogId/posts', basicGuard, blogIdValidation, postToBlogInputValidation, checkValidationErrors, blogHandler.createPostForSpecificBlog.bind(blogHandler))
-    .put('/:id', basicGuard, idValidation, blogInputValidation, checkValidationErrors, blogHandler.changeBlogById.bind(blogHandler))
-    .get('/:id', idValidation, checkValidationErrors, blogHandler.findSpecificBlogById.bind(blogHandler))
-    .get('/:blogId/posts', blogIdValidation, checkValidationErrors, blogHandler.findPostsForSpecificBlogId.bind(blogHandler))
-    .get('/', blogHandler.findBlogsByFilter.bind(blogHandler))
-    .delete('/:id', idValidation, checkValidationErrors, blogHandler.deleteSpecificBlog.bind(blogHandler))
+    .post('/', basicGuard, blogInputValidation, checkValidationErrors, blogHandler.createBlog)
+    .post('/:blogId/posts', basicGuard, blogIdValidation, postToBlogInputValidation, checkValidationErrors, blogHandler.createPostForSpecificBlog)
+    .put('/:id', basicGuard, idValidation, blogInputValidation, checkValidationErrors, blogHandler.changeBlogById)
+    .get('/:id', idValidation, checkValidationErrors, blogHandler.findSpecificBlogById)
+    .get('/:blogId/posts', blogIdValidation, checkValidationErrors, blogHandler.findPostsForSpecificBlogId)
+    .get('/', blogHandler.findBlogsByFilter)
+    .delete('/:id', idValidation, checkValidationErrors, blogHandler.deleteSpecificBlog)

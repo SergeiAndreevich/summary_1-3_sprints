@@ -1,4 +1,9 @@
-import {EntitiesForReaction, ReactionType, TypeLikeDetails} from "../../settings/types/reaction.types";
+import {
+    EntitiesForReaction,
+    ReactionType,
+    TypeLikeDetails,
+    TypeLikeDetailsFull
+} from "../../settings/types/reaction.types";
 import {ReactionModel} from "../../settings/database/ReactionModel.mongoose";
 import {WithMongoId} from "../../settings/database/db_settings";
 import {UserModel} from "../../settings/database/UserModel.mongoose";
@@ -83,6 +88,57 @@ export const likesCounterHelper = {
             reactionMap[d._id].dislikes = d.dislikesCount
         }
         return {reactionMap, myStatusMap}
+    },
+    async extendLastLikesInfo(
+        reactionMap: Record<string, {
+            likes: number
+            dislikes: number
+            newestLikes: TypeLikeDetails[]
+        }>
+    ): Promise<Record<string, {
+        likes: number
+        dislikes: number
+        newestLikes: TypeLikeDetailsFull[]
+    }>> {
+
+        // 1️⃣ собрать все userId
+        const userIds = new Set<string>();
+
+        for (const entity of Object.values(reactionMap)) {
+            for (const like of entity.newestLikes) {
+                userIds.add(like.userId);
+            }
+        }
+
+        if (userIds.size === 0) return reactionMap as any;
+
+        // 2️⃣ одним запросом получить юзеров
+        const users = await UserModel.find(
+            { _id: { $in: [...userIds] } },
+            { 'accountData.login': 1 }
+        ).lean();
+
+        // 3️⃣ сделать мапу userId → login
+        const loginMap = new Map<string, string>();
+        for (const u of users) {
+            loginMap.set(u._id.toString(), u.accountData.login);
+        }
+
+        // 4️⃣ расширить reactionMap
+        const extendedMap: Record<string, any> = {};
+
+        for (const [entityId, data] of Object.entries(reactionMap)) {
+            extendedMap[entityId] = {
+                ...data,
+                newestLikes: data.newestLikes.map(like => ({
+                    userId: like.userId,
+                    addedAt: like.addedAt,
+                    login: loginMap.get(like.userId) ?? 'unknown'
+                }))
+            };
+        }
+
+        return extendedMap;
     }
 }
 

@@ -76,6 +76,7 @@ let PostsService = class PostsService {
             return { data: null, status: httpStatuses_1.httpStatus.NotFound, error: { field: 'postId', message: 'Post not found' } };
         }
         const { reactionMap, myStatusMap } = await likeCounter_helper_1.likesCounterHelper.getLikesForEntity(reaction_types_1.EntitiesForReaction.post, [postId], userId);
+        const reactions = await likeCounter_helper_1.likesCounterHelper.extendLastLikesInfo(reactionMap);
         const resultPost = {
             id: post.id,
             title: post.title,
@@ -85,12 +86,12 @@ let PostsService = class PostsService {
             blogName: post.blogName,
             createdAt: post.createdAt,
             extendedLikesInfo: {
-                likesCount: reactionMap[postId]?.likes ?? 0,
-                dislikesCount: reactionMap[postId]?.dislikes ?? 0,
+                likesCount: reactions[postId]?.likes ?? 0,
+                dislikesCount: reactions[postId]?.dislikes ?? 0,
                 myStatus: userId
                     ? myStatusMap[postId] ?? reaction_types_1.ReactionType.none
                     : reaction_types_1.ReactionType.none,
-                newestLikes: reactionMap[postId]?.newestLikes ?? []
+                newestLikes: reactions[postId]?.newestLikes ?? []
             }
         };
         return { data: resultPost, status: httpStatuses_1.httpStatus.Ok };
@@ -103,6 +104,7 @@ let PostsService = class PostsService {
         const commentsList = await this.commentRepo.findCommentsByPostId(postId, filter);
         const commentIds = commentsList.items.map(c => c.id);
         const { reactionMap, myStatusMap } = await likeCounter_helper_1.likesCounterHelper.getLikesForEntity(reaction_types_1.EntitiesForReaction.comment, commentIds, userId);
+        const reactions = await likeCounter_helper_1.likesCounterHelper.extendLastLikesInfo(reactionMap);
         const itemsWithReaction = commentsList.items.map(i => {
             return {
                 id: i.id,
@@ -110,8 +112,8 @@ let PostsService = class PostsService {
                 commentatorInfo: i.commentatorInfo,
                 createdAt: i.createdAt,
                 likesInfo: {
-                    likesCount: reactionMap[i.id]?.likes ?? 0,
-                    dislikesCount: reactionMap[i.id]?.dislikes ?? 0,
+                    likesCount: reactions[i.id]?.likes ?? 0,
+                    dislikesCount: reactions[i.id]?.dislikes ?? 0,
                     myStatus: myStatusMap[i.id] ?? reaction_types_1.ReactionType.none
                 }
             };
@@ -129,6 +131,7 @@ let PostsService = class PostsService {
         const postsList = await this.postsRepo.findPostsByFilter(filter);
         const postIds = postsList.items.map(p => p.id);
         const { reactionMap, myStatusMap } = await likeCounter_helper_1.likesCounterHelper.getLikesForEntity(reaction_types_1.EntitiesForReaction.post, postIds, userId);
+        const reactions = await likeCounter_helper_1.likesCounterHelper.extendLastLikesInfo(reactionMap);
         const itemsWithReaction = postsList.items.map(i => {
             return {
                 id: i.id,
@@ -139,10 +142,10 @@ let PostsService = class PostsService {
                 blogName: i.blogName,
                 createdAt: i.createdAt,
                 extendedLikesInfo: {
-                    likesCount: reactionMap[i.id]?.likes ?? 0,
-                    dislikesCount: reactionMap[i.id]?.dislikes ?? 0,
+                    likesCount: reactions[i.id]?.likes ?? 0,
+                    dislikesCount: reactions[i.id]?.dislikes ?? 0,
                     myStatus: myStatusMap[i.id] ?? reaction_types_1.ReactionType.none,
-                    newestLikes: reactionMap[i.id]?.newestLikes ?? []
+                    newestLikes: reactions[i.id]?.newestLikes ?? []
                 }
             };
         });

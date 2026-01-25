@@ -73,6 +73,7 @@ let QueryRepo = class QueryRepo {
         return (0, blogFrontView_mapper_1.mapBlogToFrontView)(blog);
     }
     async findPostsForSpecificBlog(blogId, dto, userId) {
+        //нашли блог по id
         const blog = await BlogModel_mongoose_1.BlogModel.findById(blogId).lean();
         if (!blog) {
             return null;
@@ -98,9 +99,11 @@ let QueryRepo = class QueryRepo {
             .lean();
         const totalCount = await PostModel_mongoose_1.PostModel.countDocuments(filter);
         //теперь пошло новенькое: агрегация лайков
+        //достаем айдишки всех постов из массива объектов для данного блога
         const postIds = items.map(p => p._id.toString());
         //ищем все записи в коллекции реакций по всем пост-id для нашего блога
         const { reactionMap, myStatusMap } = await likeCounter_helper_1.likesCounterHelper.getLikesForEntity(reaction_types_1.EntitiesForReaction.post, postIds, userId);
+        const reactions = await likeCounter_helper_1.likesCounterHelper.extendLastLikesInfo(reactionMap);
         const enrichedData = items.map(p => ({
             id: p._id.toString(),
             title: p.title,
@@ -110,10 +113,10 @@ let QueryRepo = class QueryRepo {
             blogName: p.blogName,
             createdAt: p.createdAt.toISOString(),
             extendedLikesInfo: {
-                likesCount: reactionMap[p._id.toString()].likes ?? 0,
-                dislikesCount: reactionMap[p._id.toString()].dislikes ?? 0,
+                likesCount: reactions[p._id.toString()].likes ?? 0,
+                dislikesCount: reactions[p._id.toString()].dislikes ?? 0,
                 myStatus: userId ? myStatusMap[p._id.toString()] ?? reaction_types_1.ReactionType.none : reaction_types_1.ReactionType.none,
-                newestLikes: reactionMap[p._id.toString()].newestLikes ?? []
+                newestLikes: reactions[p._id.toString()].newestLikes ?? []
             }
         }));
         const postsToView = {

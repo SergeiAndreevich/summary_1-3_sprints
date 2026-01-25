@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.likesCounterHelper = void 0;
 const reaction_types_1 = require("../../settings/types/reaction.types");
 const ReactionModel_mongoose_1 = require("../../settings/database/ReactionModel.mongoose");
+const UserModel_mongoose_1 = require("../../settings/database/UserModel.mongoose");
 exports.likesCounterHelper = {
     async getLikesForEntity(entityType, ids, userId) {
         var _a;
@@ -74,5 +75,36 @@ exports.likesCounterHelper = {
             reactionMap[d._id].dislikes = d.dislikesCount;
         }
         return { reactionMap, myStatusMap };
+    },
+    async extendLastLikesInfo(reactionMap) {
+        // 1️⃣ собрать все userId
+        const userIds = new Set();
+        for (const entity of Object.values(reactionMap)) {
+            for (const like of entity.newestLikes) {
+                userIds.add(like.userId);
+            }
+        }
+        if (userIds.size === 0)
+            return reactionMap;
+        // 2️⃣ одним запросом получить юзеров
+        const users = await UserModel_mongoose_1.UserModel.find({ _id: { $in: [...userIds] } }, { 'accountData.login': 1 }).lean();
+        // 3️⃣ сделать мапу userId → login
+        const loginMap = new Map();
+        for (const u of users) {
+            loginMap.set(u._id.toString(), u.accountData.login);
+        }
+        // 4️⃣ расширить reactionMap
+        const extendedMap = {};
+        for (const [entityId, data] of Object.entries(reactionMap)) {
+            extendedMap[entityId] = {
+                ...data,
+                newestLikes: data.newestLikes.map(like => ({
+                    userId: like.userId,
+                    addedAt: like.addedAt,
+                    login: loginMap.get(like.userId) ?? 'unknown'
+                }))
+            };
+        }
+        return extendedMap;
     }
 };

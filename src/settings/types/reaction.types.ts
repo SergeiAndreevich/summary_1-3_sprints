@@ -11,6 +11,10 @@ export enum ReactionType  {
 }
 export type TypeLikeDetails = {
     addedAt:Date,
+    userId:string
+}
+export type TypeLikeDetailsFull = {
+    addedAt:Date,
     userId:string,
     login: string
 }

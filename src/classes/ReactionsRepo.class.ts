@@ -46,7 +46,6 @@ export class ReactionsRepo {
     ): Promise<boolean> {
 
         const existing = await ReactionModel.findOne({ entityId, entityType, userId });
-        const user = await UserModel.findById(userId).lean<WithMongoId<TypeDBUser>>();
         // нет реакции
         if (!existing) {
             if (status === ReactionType.none) return true;

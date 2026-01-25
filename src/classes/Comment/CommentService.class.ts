@@ -45,14 +45,15 @@ export class CommentService {
             return {data: null, status:httpStatus.NotFound, error:  {field: 'commentId', message: 'Comment not found'}}
         }
         const {reactionMap, myStatusMap} = await likesCounterHelper.getLikesForEntity(EntitiesForReaction.comment, [commentId], userId);
+        const reactions = await likesCounterHelper.extendLastLikesInfo(reactionMap);
         const commentToView = {
             id: comment.id,
             content: comment.content,
             commentatorInfo: comment.commentatorInfo,
             createdAt: comment.createdAt,
             likesInfo: {
-                likesCount: reactionMap[commentId]?.likes ?? 0,
-                dislikesCount: reactionMap[commentId]?.dislikes ?? 0,
+                likesCount: reactions[commentId]?.likes ?? 0,
+                dislikesCount: reactions[commentId]?.dislikes ?? 0,
                 myStatus:  myStatusMap[commentId] ?? ReactionType.none
             }
         }

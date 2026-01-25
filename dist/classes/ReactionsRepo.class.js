@@ -10,7 +10,6 @@ exports.ReactionsRepo = void 0;
 const reaction_types_1 = require("../settings/types/reaction.types");
 const ReactionModel_mongoose_1 = require("../settings/database/ReactionModel.mongoose");
 const inversify_1 = require("inversify");
-const UserModel_mongoose_1 = require("../settings/database/UserModel.mongoose");
 let ReactionsRepo = class ReactionsRepo {
     // async toggleReaction(entityId: string, entityType: EntitiesForReaction, userId:string, status:ReactionType){
     //     const existing = await ReactionModel.findOne({ entityId, entityType, userId });
@@ -45,7 +44,6 @@ let ReactionsRepo = class ReactionsRepo {
     // }
     async toggleReaction(entityId, entityType, userId, status) {
         const existing = await ReactionModel_mongoose_1.ReactionModel.findOne({ entityId, entityType, userId });
-        const user = await UserModel_mongoose_1.UserModel.findById(userId).lean();
         // нет реакции
         if (!existing) {
             if (status === reaction_types_1.ReactionType.none)
