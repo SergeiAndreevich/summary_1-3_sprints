@@ -13,13 +13,13 @@ export const authRouter = Router({});
 const auth =  container.get(Auth);
 
 authRouter
-    .post('/registration', antiClicker, userInputValidation, checkValidationErrors, auth.registerNewUser)
-    .post('/registration-confirmation', antiClicker, codeValidation, checkValidationErrors, auth.registrationConfirmation)
-    .post('/registration-email-resending',antiClicker, emailValidation, checkValidationErrors, auth.resendEmailConfirmationCode)
-    .post('/login', inputAuthValidation, checkValidationErrors, auth.loginUser)
-    .post('/password-recovery', antiClicker, emailValidation, checkValidationErrors, auth.recoveryPassword)
-    .post('/new-password', antiClicker, passwordRecoveryValidation, checkValidationErrors, auth.setNewPassword)
-    .post('/refresh-token', auth.refreshAccess)
-    .post('/logout',auth.logoutUser)
-    .get('/me', bearerGuard, auth.getMyInfo)
+    .post('/registration', antiClicker, userInputValidation, checkValidationErrors, auth.registerNewUser.bind(auth))
+    .post('/registration-confirmation', antiClicker, codeValidation, checkValidationErrors, auth.registrationConfirmation.bind(auth))
+    .post('/registration-email-resending',antiClicker, emailValidation, checkValidationErrors, auth.resendEmailConfirmationCode.bind(auth))
+    .post('/login', inputAuthValidation, checkValidationErrors, auth.loginUser.bind(auth))
+    .post('/password-recovery', antiClicker, emailValidation, checkValidationErrors, auth.recoveryPassword.bind(auth))
+    .post('/new-password', antiClicker, passwordRecoveryValidation, checkValidationErrors, auth.setNewPassword.bind(auth))
+    .post('/refresh-token', auth.refreshAccess.bind(auth))
+    .post('/logout',auth.logoutUser.bind(auth))
+    .get('/me', bearerGuard, auth.getMyInfo.bind(auth))
 

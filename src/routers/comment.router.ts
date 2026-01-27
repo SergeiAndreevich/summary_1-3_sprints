@@ -12,7 +12,7 @@ export const commentRouter = Router({});
 const commentsHandler = container.get(CommentHandler);
 
 commentRouter
-    .put('/:commentId', bearerGuard, commentIdValidation, commentInputValidation, checkValidationErrors, commentsHandler.changeCommentByCommentId)
-    .put('/:commentId/like-status', bearerGuard, commentIdValidation, likeStatusValidation,  checkValidationErrors, commentsHandler.changeCommentReaction)
-    .get('/:id',optionalBearerGuard, idValidation,  checkValidationErrors, commentsHandler.findCommentById)
-    .delete('/:commentId', bearerGuard, commentIdValidation, checkValidationErrors, commentsHandler.removeCommentByCommentId)
+    .put('/:commentId', bearerGuard, commentIdValidation, commentInputValidation, checkValidationErrors, commentsHandler.changeCommentByCommentId.bind(commentsHandler))
+    .put('/:commentId/like-status', bearerGuard, commentIdValidation, likeStatusValidation,  checkValidationErrors, commentsHandler.changeCommentReaction.bind(commentsHandler))
+    .get('/:id',optionalBearerGuard, idValidation,  checkValidationErrors, commentsHandler.findCommentById.bind(commentsHandler))
+    .delete('/:commentId', bearerGuard, commentIdValidation, checkValidationErrors, commentsHandler.removeCommentByCommentId.bind(commentsHandler))
